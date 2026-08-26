@@ -99,33 +99,34 @@ st.markdown('</div>', unsafe_allow_html=True)
 # --- BARRA LATERAL: INGRESO DE DATOS ---
 st.sidebar.header("📋 REGISTRO DE VENTAS")
 
-# 1. Ventas Hogar < $40
+# 1. Ventas Hogar < $40 (Según Tarifario)
 st.sidebar.subheader("1. Planes Hogar (< $40)")
 planes_menores = {
-    "Plan Básico ($20)": "p_20",
-    "Plan Estándar ($25)": "p_25",
-    "Plan Plata ($30)": "p_30",
-    "Plan Oro ($35)": "p_35"
+    "Conectados Básico ($25) - 3 pts": ("p_25", 3),
+    "Cinéfilos Básicos ($30) - 8 pts": ("p_30", 8),
+    "Conectados Medio ($35) - 9 pts": ("p_35_c", 9),
+    "Familiar Básico ($35) - 9 pts": ("p_35_f", 9)
 }
 
 v_hogar_menor = 0
-for nombre, key_id in planes_menores.items():
-    cant = st.sidebar.number_input(f"{nombre} (5 pts)", min_value=0, value=0, step=1, key=key_id)
+puntos_hogar_menor = 0
+for nombre, (key_id, pts) in planes_menores.items():
+    cant = st.sidebar.number_input(f"{nombre}", min_value=0, value=0, step=1, key=key_id)
     v_hogar_menor += cant
+    puntos_hogar_menor += (cant * pts)
 
-puntos_hogar_menor = v_hogar_menor * 5
-
-# 2. Ventas Hogar >= $40
+# 2. Ventas Hogar >= $40 (Según Tarifario)
 st.sidebar.subheader("2. Planes Hogar (≥ $40)")
 planes_mayores = {
-    "Gamer Medio ($40) - 10 pts": ("p_40", 10),
-    "Conectados Full ($45) - 12 pts": ("p_45c", 12),
-    "Familiar Full ($45) - 12 pts": ("p_45f", 12),
-    "Cinéfilos XFull ($50) - 13 pts": ("p_50cin", 13),
-    "Gamer Full ($50) - 13 pts": ("p_50g", 13),
-    "Conectados XFull ($55) - 14 pts": ("p_55", 14),
-    "Gamer XFull ($60) - 15 pts": ("p_60g", 15),
-    "Familiar XFull ($60) - 15 pts": ("p_60f", 15)
+    "Cinéfilos Medio ($40) - 10 pts": ("p_40_cin", 10),
+    "Gamer Medio ($40) - 10 pts": ("p_40_g", 10),
+    "Conectados Full ($45) - 12 pts": ("p_45_c", 12),
+    "Familiar Full ($45) - 12 pts": ("p_45_f", 12),
+    "Cinéfilos XFull ($50) - 13 pts": ("p_50_cin", 13),
+    "Gamer Full ($50) - 13 pts": ("p_50_g", 13),
+    "Conectados XFull ($55) - 14 pts": ("p_55_c", 14),
+    "Gamer XFull ($60) - 15 pts": ("p_60_g", 15),
+    "Familiar XFull ($60) - 15 pts": ("p_60_f", 15)
 }
 
 v_hogar_mayor_40 = 0
