@@ -8,12 +8,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILOS CSS CON COLORES CORPORATIVOS Y FONDO EXACTO FIBEX ---
+# --- ESTILOS CSS CORPORATIVOS FIBEX TELECOM ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
 
-    /* Fondo general con degradado exacto de la marca */
+    /* Fondo general con degradado oficial Fibex */
     .stApp {
         background: linear-gradient(165deg, #1ca7a6 0%, #0b5b99 35%, #031838 75%, #010a17 100%) !important;
         background-attachment: fixed !important;
@@ -23,32 +23,21 @@ st.markdown("""
 
     /* Barra Lateral */
     [data-testid="stSidebar"] {
-        background: rgba(3, 24, 56, 0.85) !important;
+        background: rgba(3, 24, 56, 0.88) !important;
         backdrop-filter: blur(10px);
         border-right: 1px solid rgba(28, 167, 166, 0.4);
     }
 
-    /* Logo y Cabecera Corporativa */
-    .fibex-logo-container {
-        text-align: center;
-        padding: 10px 0 25px 0;
-    }
-    .fibex-brand {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 42px;
-        font-weight: 900;
-        color: #FFFFFF;
-        letter-spacing: 5px;
-        margin-top: 5px;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
+    /* Subtítulo del Header */
     .fibex-subtext {
         font-family: 'Montserrat', sans-serif;
-        font-size: 13px;
+        font-size: 15px;
         font-weight: 700;
         color: #80E3E2;
-        letter-spacing: 10px;
-        margin-top: -8px;
+        text-align: center;
+        letter-spacing: 2px;
+        margin-top: -10px;
+        margin-bottom: 25px;
     }
 
     /* Tarjetas de Contenido */
@@ -79,7 +68,7 @@ st.markdown("""
         font-weight: 800 !important;
     }
 
-    /* Radio buttons */
+    /* Selectores */
     .stRadio label {
         color: #FFFFFF !important;
         font-weight: 600 !important;
@@ -87,21 +76,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER CON LOGO OFICIAL FIBEX ---
-st.markdown("""
-    <div class="fibex-logo-container">
-        <svg width="85" height="85" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g stroke="#FFFFFF" stroke-linecap="round">
-                <circle cx="50" cy="50" r="44" stroke-width="2" opacity="0.25"/>
-                <path d="M 22,28 C 36,14 64,14 78,28 C 64,42 36,42 22,28 Z" stroke-width="4" fill="white" opacity="0.95"/>
-                <path d="M 12,50 C 30,30 70,30 88,50 C 70,70 30,70 12,50 Z" stroke-width="4.5" fill="white" opacity="0.98"/>
-                <path d="M 22,72 C 36,58 64,58 78,72 C 64,86 36,86 22,72 Z" stroke-width="4" fill="white" opacity="0.95"/>
-            </g>
-        </svg>
-        <div class="fibex-brand">FIBEX</div>
-        <div class="fibex-subtext">TELECOM</div>
-    </div>
-""", unsafe_allow_html=True)
+# --- CABECERA CON LOGO OFICIAL PNG ---
+col_head1, col_head2, col_head3 = st.columns([1, 2, 1])
+with col_head2:
+    try:
+        st.image("logo.png", use_container_width=True)
+    except:
+        st.markdown("<h1 style='text-align: center; color: white;'>FIBEX TELECOM</h1>", unsafe_allow_html=True)
+
+st.markdown('<div class="fibex-subtext">⚡ SIMULADOR OFICIAL DE COMISIONES Y METAS (BOLETÍN N° 022)</div>', unsafe_allow_html=True)
 
 # --- SELECCIÓN PRINCIPAL DE CANAL ---
 st.markdown('<div class="content-card">', unsafe_allow_html=True)
@@ -167,7 +150,7 @@ puntos_upselling = v_upselling * 4
 
 total_puntos_base = total_puntos_hogar + puntos_pyme + puntos_rcv + puntos_upselling
 
-# --- LÓGICA DE VALIDACIÓN ---
+# --- LÓGICA DE VALIDACIÓN DE METAS ---
 if canal == "Oficinas (ATC)":
     req_h_op1, req_h_op2, req_pyme_op2 = 8, 6, 1
     req_h40_op3, req_pyme_op4 = 3, 4
@@ -188,7 +171,7 @@ opc6 = (total_ventas_hogar >= req_h_op6) and (v_upselling >= req_upsell_op6)
 
 califica = opc1 or opc2 or opc3 or opc4 or opc5 or opc6
 
-# --- CATEGORÍA ---
+# --- CATEGORÍA DE BONIFICACIÓN ---
 if canal == "Oficinas (ATC)":
     if total_ventas_hogar >= 30: categoria, pct_bono = "SUPER ESTRELLAS", 0.45
     elif total_ventas_hogar >= 23: categoria, pct_bono = "ÉLITE", 0.40
@@ -223,7 +206,7 @@ if califica:
 else:
     st.error(f"❌ AÚN NO ALCANZAS LA META DE CALIFICACIÓN PARA **{canal.upper()}**")
     
-    with st.expander("🔍 Ver qué te falta para calificar en esta quincena:"):
+    with st.expander("🔍 Ver faltante por opción de calificación:"):
         st.write(f"- **Opción 1:** Llevas {total_ventas_hogar}/{req_h_op1} Ventas Hogar")
         st.write(f"- **Opción 2:** Llevas {total_ventas_hogar}/{req_h_op2} Hogar y {v_pyme}/{req_pyme_op2} PYME")
         st.write(f"- **Opción 3:** Llevas {v_hogar_mayor_40}/{req_h40_op3} Ventas Hogar ≥ $40")
@@ -240,11 +223,11 @@ st.subheader("📊 Resumen de Comisiones")
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Total Ventas Hogar", f"{total_ventas_hogar}")
 c2.metric("Puntos Base", f"{total_puntos_base} pts")
-c3.metric("Categoría Alcantada", f"{categoria} (+{int(pct_bono*100)}%)")
+c3.metric("Categoría Alcanzada", f"{categoria} (+{int(pct_bono*100)}%)")
 c4.metric("💰 ESTIMADO A COBRAR", f"${total_puntos_finales:.2f} Ref")
 
 if califica and pct_bono > 0:
     st.balloons()
-    st.success(f"🔥 ¡Excelente gestión! Bonificas un **+{int(pct_bono*100)}%** adicional sobre todos tus puntos acumulados.")
+    st.success(f"🔥 ¡Excelente gestión! Tu categoría **{categoria}** te otorga un **+{int(pct_bono*100)}%** extra sobre el total de tus puntos.")
 
 st.markdown('</div>', unsafe_allow_html=True)
