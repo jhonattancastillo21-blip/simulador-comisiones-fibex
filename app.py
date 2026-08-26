@@ -2,143 +2,164 @@ import streamlit as st
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
-    page_title="Simulador Fibex Telecom",
+    page_title="Fibex Telecom - Simulador de Comisiones",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILOS CSS CORPORATIVOS FIBEX TELECOM (AZUL / CIAN) ---
+# --- ESTILOS CSS CON COLORES CORPORATIVOS Y FONDO EXACTO FIBEX ---
 st.markdown("""
     <style>
-    /* Fondo general */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
+
+    /* Fondo general con degradado exacto de la marca */
     .stApp {
-        background-color: #0B132B;
-        color: #FFFFFF;
-    }
-    
-    /* Barra lateral */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1C2541 0%, #0B132B 100%);
-        border-right: 1px solid #00B4D8;
-    }
-    
-    /* Banner principal con degradado corporativo Fibex */
-    .fibex-header {
-        background: linear-gradient(135deg, #03045E 0%, #0077B6 50%, #00B4D8 100%);
-        padding: 24px;
-        border-radius: 12px;
-        box-shadow: 0px 4px 15px rgba(0, 180, 216, 0.3);
-        margin-bottom: 25px;
-        text-align: center;
-    }
-    .fibex-header h1 {
+        background: linear-gradient(165deg, #1ca7a6 0%, #0b5b99 35%, #031838 75%, #010a17 100%) !important;
+        background-attachment: fixed !important;
+        font-family: 'Montserrat', sans-serif !important;
         color: #FFFFFF !important;
-        font-weight: 800;
-        font-size: 2.2rem;
-        margin: 0;
-        letter-spacing: 1px;
-    }
-    .fibex-header p {
-        color: #E0F7FA !important;
-        margin-top: 5px;
-        font-size: 1.05rem;
     }
 
-    /* Tarjetas de Métricas */
+    /* Barra Lateral */
+    [data-testid="stSidebar"] {
+        background: rgba(3, 24, 56, 0.85) !important;
+        backdrop-filter: blur(10px);
+        border-right: 1px solid rgba(28, 167, 166, 0.4);
+    }
+
+    /* Logo y Cabecera Corporativa */
+    .fibex-logo-container {
+        text-align: center;
+        padding: 10px 0 25px 0;
+    }
+    .fibex-brand {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 42px;
+        font-weight: 900;
+        color: #FFFFFF;
+        letter-spacing: 5px;
+        margin-top: 5px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .fibex-subtext {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #80E3E2;
+        letter-spacing: 10px;
+        margin-top: -8px;
+    }
+
+    /* Tarjetas de Contenido */
+    .content-card {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        padding: 20px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        margin-bottom: 20px;
+    }
+
+    /* Metrics de Streamlit */
     div[data-testid="stMetric"] {
-        background: #1C2541;
-        border: 1px solid #00B4D8;
-        border-radius: 10px;
-        padding: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        background: rgba(3, 24, 56, 0.6) !important;
+        border: 1px solid #1ca7a6 !important;
+        border-radius: 12px !important;
+        padding: 15px !important;
     }
     div[data-testid="stMetric"] label {
-        color: #90E0EF !important;
-        font-size: 0.95rem !important;
-        font-weight: 600;
+        color: #80E3E2 !important;
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
     }
     div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
         color: #FFFFFF !important;
-        font-weight: 700;
+        font-weight: 800 !important;
     }
 
-    /* Botones de radio e inputs */
+    /* Radio buttons */
     .stRadio label {
         color: #FFFFFF !important;
-        font-weight: 600;
-    }
-    
-    /* Separadores */
-    hr {
-        border-color: #00B4D8 !important;
+        font-weight: 600 !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER PRINCIPAL CORPORATIVO ---
+# --- HEADER CON LOGO OFICIAL FIBEX ---
 st.markdown("""
-    <div class="fibex-header">
-        <h1>FIBEX TELECOM</h1>
-        <p>⚡ Simulador Oficial de Comisiones y Metas Quincenales (Boletín N° 022)</p>
+    <div class="fibex-logo-container">
+        <svg width="85" height="85" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g stroke="#FFFFFF" stroke-linecap="round">
+                <circle cx="50" cy="50" r="44" stroke-width="2" opacity="0.25"/>
+                <path d="M 22,28 C 36,14 64,14 78,28 C 64,42 36,42 22,28 Z" stroke-width="4" fill="white" opacity="0.95"/>
+                <path d="M 12,50 C 30,30 70,30 88,50 C 70,70 30,70 12,50 Z" stroke-width="4.5" fill="white" opacity="0.98"/>
+                <path d="M 22,72 C 36,58 64,58 78,72 C 64,86 36,86 22,72 Z" stroke-width="4" fill="white" opacity="0.95"/>
+            </g>
+        </svg>
+        <div class="fibex-brand">FIBEX</div>
+        <div class="fibex-subtext">TELECOM</div>
     </div>
 """, unsafe_allow_html=True)
 
-# --- CANAL DE VENTA ---
-canal = st.sidebar.radio(
-    "📍 Selecciona tu Área / Canal:",
-    ["Ventas Calle / Call Center", "Oficinas (ATC)"]
+# --- SELECCIÓN PRINCIPAL DE CANAL ---
+st.markdown('<div class="content-card">', unsafe_allow_html=True)
+canal = st.radio(
+    "📌 **SELECCIONA TU ÁREA DE TRABAJO:**",
+    ["Oficinas (ATC)", "Ventas Calle / Call Center"],
+    horizontal=True,
+    key="canal_selector"
 )
+st.markdown('</div>', unsafe_allow_html=True)
 
-st.sidebar.markdown("---")
-st.sidebar.header("📥 Registro de Ventas Quincenales")
+# --- BARRA LATERAL: INGRESO DE DATOS ---
+st.sidebar.header("📋 REGISTRO DE VENTAS")
 
-# --- CATALOGO DE PLANES HOGAR < $40 (5 PUNTOS C/U) ---
-st.sidebar.subheader("1. Planes Hogar Menores a $40 (5 pts)")
+# 1. Ventas Hogar < $40
+st.sidebar.subheader("1. Planes Hogar (< $40)")
 planes_menores = {
-    "Plan Básico ($20)": 5,
-    "Plan Estándar ($25)": 5,
-    "Plan Plata ($30)": 5,
-    "Plan Oro ($35)": 5
+    "Plan Básico ($20)": "p_20",
+    "Plan Estándar ($25)": "p_25",
+    "Plan Plata ($30)": "p_30",
+    "Plan Oro ($35)": "p_35"
 }
 
 v_hogar_menor = 0
-puntos_hogar_menor = 0
-
-for plan, pts in planes_menores.items():
-    cant = st.sidebar.number_input(f"{plan}", min_value=0, value=0, step=1)
+for nombre, key_id in planes_menores.items():
+    cant = st.sidebar.number_input(f"{nombre} (5 pts)", min_value=0, value=0, step=1, key=key_id)
     v_hogar_menor += cant
-    puntos_hogar_menor += (cant * pts)
 
-# --- CATALOGO DE PLANES HOGAR >= $40 (PUNTOS VARIABLES) ---
-st.sidebar.subheader("2. Planes Hogar Iguales o Mayores a $40")
+puntos_hogar_menor = v_hogar_menor * 5
+
+# 2. Ventas Hogar >= $40
+st.sidebar.subheader("2. Planes Hogar (≥ $40)")
 planes_mayores = {
-    "Gamer Medio ($40) - 10 pts": 10,
-    "Conectados Full ($45) - 12 pts": 12,
-    "Familiar Full ($45) - 12 pts": 12,
-    "Cinéfilos XFull ($50) - 13 pts": 13,
-    "Gamer Full ($50) - 13 pts": 13,
-    "Conectados XFull ($55) - 14 pts": 14,
-    "Gamer XFull ($60) - 15 pts": 15,
-    "Familiar XFull ($60) - 15 pts": 15,
+    "Gamer Medio ($40) - 10 pts": ("p_40", 10),
+    "Conectados Full ($45) - 12 pts": ("p_45c", 12),
+    "Familiar Full ($45) - 12 pts": ("p_45f", 12),
+    "Cinéfilos XFull ($50) - 13 pts": ("p_50cin", 13),
+    "Gamer Full ($50) - 13 pts": ("p_50g", 13),
+    "Conectados XFull ($55) - 14 pts": ("p_55", 14),
+    "Gamer XFull ($60) - 15 pts": ("p_60g", 15),
+    "Familiar XFull ($60) - 15 pts": ("p_60f", 15)
 }
 
 v_hogar_mayor_40 = 0
 puntos_hogar_mayor = 0
-
-for plan, pts in planes_mayores.items():
-    cant = st.sidebar.number_input(f"{plan}", min_value=0, value=0, step=1)
+for nombre, (key_id, pts) in planes_mayores.items():
+    cant = st.sidebar.number_input(f"{nombre}", min_value=0, value=0, step=1, key=key_id)
     v_hogar_mayor_40 += cant
     puntos_hogar_mayor += (cant * pts)
 
 total_ventas_hogar = v_hogar_menor + v_hogar_mayor_40
 total_puntos_hogar = puntos_hogar_menor + puntos_hogar_mayor
 
-# --- PRODUCTOS ADICIONALES ---
-st.sidebar.subheader("3. Servicios Adicionales / Corporativos")
-v_pyme = st.sidebar.number_input("Ventas PYME (15 pts)", min_value=0, value=0, step=1)
-v_rcv = st.sidebar.number_input("Ventas RCV (3 pts)", min_value=0, value=0, step=1)
-v_upselling = st.sidebar.number_input("Ventas UPSELLING (4 pts)", min_value=0, value=0, step=1)
+# 3. Adicionales
+st.sidebar.subheader("3. Servicios Adicionales")
+v_pyme = st.sidebar.number_input("Ventas PYME (15 pts)", min_value=0, value=0, step=1, key="v_pyme")
+v_rcv = st.sidebar.number_input("Ventas RCV (3 pts)", min_value=0, value=0, step=1, key="v_rcv")
+v_upselling = st.sidebar.number_input("Ventas UPSELLING (4 pts)", min_value=0, value=0, step=1, key="v_upsell")
 
 puntos_pyme = v_pyme * 15
 puntos_rcv = v_rcv * 3
@@ -147,24 +168,27 @@ puntos_upselling = v_upselling * 4
 total_puntos_base = total_puntos_hogar + puntos_pyme + puntos_rcv + puntos_upselling
 
 # --- LÓGICA DE VALIDACIÓN ---
-if canal == "Ventas Calle / Call Center":
-    opc1 = total_ventas_hogar >= 15
-    opc2 = (total_ventas_hogar >= 10) and (v_pyme >= 1)
-    opc3 = v_hogar_mayor_40 >= 5
-    opc4 = v_pyme >= 8
-    opc5 = (total_ventas_hogar >= 10) and (v_rcv >= 4)
-    opc6 = (total_ventas_hogar >= 10) and (v_upselling >= 5)
-else:  # Oficinas (ATC)
-    opc1 = total_ventas_hogar >= 8
-    opc2 = (total_ventas_hogar >= 6) and (v_pyme >= 1)
-    opc3 = v_hogar_mayor_40 >= 3
-    opc4 = v_pyme >= 4
-    opc5 = (total_ventas_hogar >= 6) and (v_rcv >= 4)
-    opc6 = (total_ventas_hogar >= 6) and (v_upselling >= 5)
+if canal == "Oficinas (ATC)":
+    req_h_op1, req_h_op2, req_pyme_op2 = 8, 6, 1
+    req_h40_op3, req_pyme_op4 = 3, 4
+    req_h_op5, req_rcv_op5 = 6, 4
+    req_h_op6, req_upsell_op6 = 6, 5
+else:
+    req_h_op1, req_h_op2, req_pyme_op2 = 15, 10, 1
+    req_h40_op3, req_pyme_op4 = 5, 8
+    req_h_op5, req_rcv_op5 = 10, 4
+    req_h_op6, req_upsell_op6 = 10, 5
+
+opc1 = total_ventas_hogar >= req_h_op1
+opc2 = (total_ventas_hogar >= req_h_op2) and (v_pyme >= req_pyme_op2)
+opc3 = v_hogar_mayor_40 >= req_h40_op3
+opc4 = v_pyme >= req_pyme_op4
+opc5 = (total_ventas_hogar >= req_h_op5) and (v_rcv >= req_rcv_op5)
+opc6 = (total_ventas_hogar >= req_h_op6) and (v_upselling >= req_upsell_op6)
 
 califica = opc1 or opc2 or opc3 or opc4 or opc5 or opc6
 
-# --- CATEGORÍA Y MULTIPLICADOR ---
+# --- CATEGORÍA ---
 if canal == "Oficinas (ATC)":
     if total_ventas_hogar >= 30: categoria, pct_bono = "SUPER ESTRELLAS", 0.45
     elif total_ventas_hogar >= 23: categoria, pct_bono = "ÉLITE", 0.40
@@ -180,36 +204,47 @@ else:
     elif total_ventas_hogar >= 10: categoria, pct_bono = "JUNIOR", 0.00
     else: categoria, pct_bono = "BÁSICO", 0.00
 
-# --- CÁLCULO FINAL ---
-puntos_bonificados = total_puntos_base * pct_bono
-total_puntos_finales = total_puntos_base + puntos_bonificados if califica else 0
+total_puntos_finales = total_puntos_base * (1 + pct_bono) if califica else 0
 
-# --- RESULTADOS Y DASHBOARD ---
-st.markdown("### 🎯 Estado de Calificación Quincenal")
+# --- ESTATUS DE CALIFICACIÓN ---
+st.markdown('<div class="content-card">', unsafe_allow_html=True)
+st.subheader("🎯 Estatus de Calificación Quincenal")
 
 if califica:
-    st.success(f"¡FELICIDADES! Calificas para cobrar comisiones en el canal **{canal}**.")
-    opciones_cumplidas = []
-    if opc1: opciones_cumplidas.append("Opción 1 (Ventas Hogar Totales)")
-    if opc2: opciones_cumplidas.append("Opción 2 (Hogar + PYME)")
-    if opc3: opciones_cumplidas.append("Opción 3 (Ventas ≥ $40)")
-    if opc4: opciones_cumplidas.append("Opción 4 (PYME Totales)")
-    if opc5: opciones_cumplidas.append("Opción 5 (Hogar + RCV)")
-    if opc6: opciones_cumplidas.append("Opción 6 (Hogar + UPSELLING)")
-    
-    st.info(f" Cumples con: **{', '.join(opciones_cumplidas)}**")
+    st.success(f"¡ENHORABUENA! Estás **CALIFICADO** para comisionar en **{canal}**.")
+    cumplidas = []
+    if opc1: cumplidas.append("Opción 1 (Ventas Hogar)")
+    if opc2: cumplidas.append("Opción 2 (Hogar + PYME)")
+    if opc3: cumplidas.append("Opción 3 (Hogar ≥ $40)")
+    if opc4: cumplidas.append("Opción 4 (PYME)")
+    if opc5: cumplidas.append("Opción 5 (Hogar + RCV)")
+    if opc6: cumplidas.append("Opción 6 (Hogar + UPSELLING)")
+    st.info(f" Cumples con: **{', '.join(cumplidas)}**")
 else:
-    st.error(f"❌ AÚN NO ALCANZAS EL UMBRAL DE CALIFICACIÓN PARA **{canal.upper()}**.")
+    st.error(f"❌ AÚN NO ALCANZAS LA META DE CALIFICACIÓN PARA **{canal.upper()}**")
+    
+    with st.expander("🔍 Ver qué te falta para calificar en esta quincena:"):
+        st.write(f"- **Opción 1:** Llevas {total_ventas_hogar}/{req_h_op1} Ventas Hogar")
+        st.write(f"- **Opción 2:** Llevas {total_ventas_hogar}/{req_h_op2} Hogar y {v_pyme}/{req_pyme_op2} PYME")
+        st.write(f"- **Opción 3:** Llevas {v_hogar_mayor_40}/{req_h40_op3} Ventas Hogar ≥ $40")
+        st.write(f"- **Opción 4:** Llevas {v_pyme}/{req_pyme_op4} Ventas PYME")
+        st.write(f"- **Opción 5:** Llevas {total_ventas_hogar}/{req_h_op5} Hogar y {v_rcv}/{req_rcv_op5} RCV")
+        st.write(f"- **Opción 6:** Llevas {total_ventas_hogar}/{req_h_op6} Hogar y {v_upselling}/{req_upsell_op6} Upselling")
 
-st.markdown("---")
-st.markdown("### 📊 Métricas de Rendimiento")
+st.markdown('</div>', unsafe_allow_html=True)
 
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("Ventas Hogar Totales", f"{total_ventas_hogar}")
-m2.metric("Puntos Base Acumulados", f"{total_puntos_base} pts")
-m3.metric("Categoría de Bono", f"{categoria} (+{int(pct_bono*100)}%)")
-m4.metric("💰 ESTIMADO A COBRAR", f"${total_puntos_finales:.2f} Ref")
+# --- PANEL DE RESULTADOS ---
+st.markdown('<div class="content-card">', unsafe_allow_html=True)
+st.subheader("📊 Resumen de Comisiones")
+
+c1, c2, c3, c4 = st.columns(4)
+c1.metric("Total Ventas Hogar", f"{total_ventas_hogar}")
+c2.metric("Puntos Base", f"{total_puntos_base} pts")
+c3.metric("Categoría Alcantada", f"{categoria} (+{int(pct_bono*100)}%)")
+c4.metric("💰 ESTIMADO A COBRAR", f"${total_puntos_finales:.2f} Ref")
 
 if califica and pct_bono > 0:
     st.balloons()
-    st.success(f"🔥 ¡Excelente gestión! Tu categoría **{categoria}** te otorga un **+{int(pct_bono*100)}%** extra sobre el total de tus puntos.")
+    st.success(f"🔥 ¡Excelente gestión! Bonificas un **+{int(pct_bono*100)}%** adicional sobre todos tus puntos acumulados.")
+
+st.markdown('</div>', unsafe_allow_html=True)
