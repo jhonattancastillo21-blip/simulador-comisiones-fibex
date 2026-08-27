@@ -1,86 +1,85 @@
 import streamlit as st
+import time
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
-    page_title="Fibex Telecom - Simulador de Comisiones",
+    page_title="Fibex Telecom | Dashboard de Comisiones",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILOS CSS CORPORATIVOS Y ANIMACIONES ---
+# --- ESTILOS CSS CORPORATIVOS PREMIUM ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
 
     /* Fondo general con degradado oficial Fibex */
     .stApp {
-        background: linear-gradient(165deg, #1ca7a6 0%, #0b5b99 35%, #031838 75%, #010a17 100%) !important;
+        background: linear-gradient(165deg, #010a17 0%, #031838 35%, #0b5b99 75%, #1ca7a6 100%) !important;
         background-attachment: fixed !important;
         font-family: 'Montserrat', sans-serif !important;
         color: #FFFFFF !important;
     }
 
-    /* Barra Lateral */
+    /* Barra Lateral Premium */
     [data-testid="stSidebar"] {
-        background: rgba(3, 24, 56, 0.88) !important;
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(28, 167, 166, 0.4);
+        background: rgba(2, 14, 33, 0.95) !important;
+        backdrop-filter: blur(15px);
+        border-right: 1px solid rgba(28, 167, 166, 0.3);
     }
 
     /* Subtítulo del Header */
     .fibex-subtext {
         font-family: 'Montserrat', sans-serif;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 700;
         color: #80E3E2;
         text-align: center;
-        letter-spacing: 1.5px;
-        margin-top: -10px;
-        margin-bottom: 25px;
+        letter-spacing: 2px;
+        margin-top: -15px;
+        margin-bottom: 35px;
         font-style: italic;
+        text-transform: uppercase;
     }
 
-    /* Tarjetas de Contenido */
-    .content-card {
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 16px;
-        padding: 20px;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        margin-bottom: 20px;
-    }
-
-    /* Metrics de Streamlit */
+    /* Estilo de las Métricas (Tarjetas de resultados) */
     div[data-testid="stMetric"] {
-        background: rgba(3, 24, 56, 0.6) !important;
-        border: 1px solid #1ca7a6 !important;
+        background: rgba(3, 24, 56, 0.7) !important;
+        border: 1px solid rgba(28, 167, 166, 0.5) !important;
         border-radius: 12px !important;
-        padding: 15px !important;
+        padding: 20px !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease-in-out;
+    }
+    div[data-testid="stMetric"]:hover {
+        transform: translateY(-3px);
+        border: 1px solid #80E3E2 !important;
     }
     div[data-testid="stMetric"] label {
         color: #80E3E2 !important;
-        font-size: 0.9rem !important;
+        font-size: 1rem !important;
         font-weight: 600 !important;
     }
     div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
         color: #FFFFFF !important;
-        font-weight: 800 !important;
+        font-weight: 900 !important;
+        font-size: 2.2rem !important;
     }
 
-    /* Selectores */
-    .stRadio label {
-        color: #FFFFFF !important;
-        font-weight: 600 !important;
+    /* Separadores nativos */
+    hr {
+        border-color: rgba(28, 167, 166, 0.3) !important;
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
     }
 
     /* ANIMACIÓN DE MANOS APLAUDIENDO */
     @keyframes clapBounce {
         0% { transform: scale(1) rotate(0deg); }
-        25% { transform: scale(1.3) rotate(-12deg); }
+        25% { transform: scale(1.2) rotate(-10deg); }
         50% { transform: scale(1) rotate(0deg); }
-        75% { transform: scale(1.3) rotate(12deg); }
+        75% { transform: scale(1.2) rotate(10deg); }
         100% { transform: scale(1) rotate(0deg); }
     }
     .clapping-hands {
@@ -88,12 +87,13 @@ st.markdown("""
         animation: clapBounce 0.5s infinite ease-in-out;
     }
 
-    /* VENTANA POP-UP DE CELEBRACIÓN (APARECE Y DESAPARECE EN 5 SEGUNDOS) */
+    /* VENTANA POP-UP DE CELEBRACIÓN (AUTO-DESAPARECE EN 5 SEGUNDOS) */
     @keyframes modalPopup5s {
-        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
-        10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); visibility: hidden; display: none; }
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        8% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+        12% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        88% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); visibility: hidden; display: none; }
     }
 
     .celebration-modal {
@@ -101,18 +101,18 @@ st.markdown("""
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(3, 24, 56, 0.96);
+        background: linear-gradient(135deg, rgba(2, 14, 33, 0.98) 0%, rgba(3, 24, 56, 0.98) 100%);
         border: 2px solid #1ca7a6;
-        border-radius: 24px;
-        padding: 35px 25px;
+        border-radius: 20px;
+        padding: 40px 30px;
         text-align: center;
         z-index: 999999;
-        box-shadow: 0 0 60px rgba(28, 167, 166, 0.8), 0 0 30px rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(15px);
+        box-shadow: 0 0 50px rgba(28, 167, 166, 0.5), 0 0 20px rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(20px);
         animation: modalPopup5s 5s forwards;
         pointer-events: none;
-        width: 85%;
-        max-width: 480px;
+        width: 90%;
+        max-width: 500px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -123,31 +123,33 @@ with col_head2:
     try:
         st.image("logo.png", use_container_width=True)
     except:
-        st.markdown("<h1 style='text-align: center; color: white;'>FIBEX TELECOM</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center; color: white; font-weight: 900;'>FIBEX TELECOM</h1>", unsafe_allow_html=True)
 
 # --- FRASE MOTIVACIONAL Y DE GESTIÓN ---
-st.markdown('<div class="fibex-subtext">⚡ "LO QUE NO SE MIDE, NO SE CONTROLA; Y LO QUE NO SE CONTROLA, NO SE PUEDE MEJORAR."</div>', unsafe_allow_html=True)
+st.markdown('<div class="fibex-subtext">⚡ "Lo que no se mide, no se controla; y lo que no se controla, no se puede mejorar."</div>', unsafe_allow_html=True)
 
 # --- SELECCIÓN PRINCIPAL DE CANAL ---
-st.markdown('<div class="content-card">', unsafe_allow_html=True)
+st.markdown("### 📌 ÁREA DE DESEMPEÑO")
 canal = st.radio(
-    "📌 **SELECCIONA TU ÁREA DE TRABAJO:**",
+    "Selecciona el canal a evaluar:",
     ["Oficinas (ATC)", "Ventas Calle / Call Center"],
     horizontal=True,
-    key="canal_selector"
+    label_visibility="collapsed"
 )
-st.markdown('</div>', unsafe_allow_html=True)
+
+st.divider() # Línea separadora limpia y elegante
 
 # --- BARRA LATERAL: INGRESO DE DATOS ---
-st.sidebar.header("📋 REGISTRO DE VENTAS")
+st.sidebar.markdown("## 📊 GESTIÓN COMERCIAL")
+st.sidebar.caption("Ingresa el volumen de ventas del período.")
 
 # 1. Ventas Hogar < $40 (Según Tarifario)
-st.sidebar.subheader("1. Planes Hogar (< $40)")
+st.sidebar.markdown("### 1. Planes Hogar (< $40)")
 planes_menores = {
-    "Conectados Básico ($25) - 3 pts": ("p_25", 3),
-    "Cinéfilos Básicos ($30) - 8 pts": ("p_30", 8),
-    "Conectados Medio ($35) - 9 pts": ("p_35_c", 9),
-    "Familiar Básico ($35) - 9 pts": ("p_35_f", 9)
+    "Conectados Básico ($25) [3 pts]": ("p_25", 3),
+    "Cinéfilos Básicos ($30) [8 pts]": ("p_30", 8),
+    "Conectados Medio ($35) [9 pts]": ("p_35_c", 9),
+    "Familiar Básico ($35) [9 pts]": ("p_35_f", 9)
 }
 
 v_hogar_menor = 0
@@ -158,17 +160,17 @@ for nombre, (key_id, pts) in planes_menores.items():
     puntos_hogar_menor += (cant * pts)
 
 # 2. Ventas Hogar >= $40 (Según Tarifario)
-st.sidebar.subheader("2. Planes Hogar (≥ $40)")
+st.sidebar.markdown("### 2. Planes Hogar (≥ $40)")
 planes_mayores = {
-    "Cinéfilos Medio ($40) - 10 pts": ("p_40_cin", 10),
-    "Gamer Medio ($40) - 10 pts": ("p_40_g", 10),
-    "Conectados Full ($45) - 12 pts": ("p_45_c", 12),
-    "Familiar Full ($45) - 12 pts": ("p_45_f", 12),
-    "Cinéfilos XFull ($50) - 13 pts": ("p_50_cin", 13),
-    "Gamer Full ($50) - 13 pts": ("p_50_g", 13),
-    "Conectados XFull ($55) - 14 pts": ("p_55_c", 14),
-    "Gamer XFull ($60) - 15 pts": ("p_60_g", 15),
-    "Familiar XFull ($60) - 15 pts": ("p_60_f", 15)
+    "Cinéfilos Medio ($40) [10 pts]": ("p_40_cin", 10),
+    "Gamer Medio ($40) [10 pts]": ("p_40_g", 10),
+    "Conectados Full ($45) [12 pts]": ("p_45_c", 12),
+    "Familiar Full ($45) [12 pts]": ("p_45_f", 12),
+    "Cinéfilos XFull ($50) [13 pts]": ("p_50_cin", 13),
+    "Gamer Full ($50) [13 pts]": ("p_50_g", 13),
+    "Conectados XFull ($55) [14 pts]": ("p_55_c", 14),
+    "Gamer XFull ($60) [15 pts]": ("p_60_g", 15),
+    "Familiar XFull ($60) [15 pts]": ("p_60_f", 15)
 }
 
 v_hogar_mayor_40 = 0
@@ -182,10 +184,10 @@ total_ventas_hogar = v_hogar_menor + v_hogar_mayor_40
 total_puntos_hogar = puntos_hogar_menor + puntos_hogar_mayor
 
 # 3. Adicionales
-st.sidebar.subheader("3. Servicios Adicionales")
-v_pyme = st.sidebar.number_input("Ventas PYME (15 pts)", min_value=0, value=0, step=1, key="v_pyme")
-v_rcv = st.sidebar.number_input("Ventas RCV (3 pts)", min_value=0, value=0, step=1, key="v_rcv")
-v_upselling = st.sidebar.number_input("Ventas UPSELLING (4 pts)", min_value=0, value=0, step=1, key="v_upsell")
+st.sidebar.markdown("### 3. Servicios Corporativos / Extras")
+v_pyme = st.sidebar.number_input("PYME (15 pts)", min_value=0, value=0, step=1, key="v_pyme")
+v_rcv = st.sidebar.number_input("RCV (3 pts)", min_value=0, value=0, step=1, key="v_rcv")
+v_upselling = st.sidebar.number_input("UPSELLING (4 pts)", min_value=0, value=0, step=1, key="v_upsell")
 
 puntos_pyme = v_pyme * 15
 puntos_rcv = v_rcv * 3
@@ -233,28 +235,28 @@ else:
 total_puntos_finales = total_puntos_base * (1 + pct_bono) if califica else 0
 
 # --- ESTATUS DE CALIFICACIÓN ---
-st.markdown('<div class="content-card">', unsafe_allow_html=True)
-st.subheader("🎯 Estatus de Calificación Quincenal")
+st.markdown("### 🎯 ESTATUS DE CALIFICACIÓN QUINCENAL")
 
 if califica:
-    st.success(f"¡ENHORABUENA! Estás **CALIFICADO** para comisionar en **{canal}**.")
+    st.success(f"✅ **CALIFICACIÓN APROBADA** | Estás habilitado para el esquema de comisiones en **{canal}**.")
     cumplidas = []
-    if opc1: cumplidas.append("Opción 1 (Ventas Hogar)")
-    if opc2: cumplidas.append("Opción 2 (Hogar + PYME)")
-    if opc3: cumplidas.append("Opción 3 (Hogar ≥ $40)")
-    if opc4: cumplidas.append("Opción 4 (PYME)")
-    if opc5: cumplidas.append("Opción 5 (Hogar + RCV)")
-    if opc6: cumplidas.append("Opción 6 (Hogar + UPSELLING)")
-    st.info(f" Cumples con: **{', '.join(cumplidas)}**")
+    if opc1: cumplidas.append("Volumen Ventas Hogar (Opción 1)")
+    if opc2: cumplidas.append("Mix Hogar + PYME (Opción 2)")
+    if opc3: cumplidas.append("Ticket Alto Hogar ≥ $40 (Opción 3)")
+    if opc4: cumplidas.append("Volumen PYME (Opción 4)")
+    if opc5: cumplidas.append("Mix Hogar + RCV (Opción 5)")
+    if opc6: cumplidas.append("Mix Hogar + UPSELLING (Opción 6)")
+    
+    st.info(f"**Criterios alcanzados:** {', '.join(cumplidas)}")
     
     # --- POP-UP DE CELEBRACIÓN GRANDE (AUTO-DESAPARECE EN 5s) ---
     st.markdown("""
         <div class="celebration-modal">
-            <h2 style="color: #80E3E2; margin-bottom: 5px; font-weight: 800;">¡FELICIDADES! 🎉</h2>
-            <p style="color: #FFFFFF; font-size: 17px; font-weight: 700; margin-bottom: 15px;">¡ESTÁS CALIFICADO PARA COMISIONAR!</p>
-            <div style="font-size: 65px; margin: 10px 0;" class="clapping-hands">👏🏼 👏🏼 👏🏼</div>
+            <h2 style="color: #80E3E2; margin-bottom: 5px; font-weight: 900; font-family: 'Montserrat', sans-serif; letter-spacing: 1px;">¡META ALCANZADA! 🎉</h2>
+            <p style="color: #FFFFFF; font-size: 18px; font-weight: 600; margin-bottom: 20px;">CALIFICACIÓN APROBADA EXITOSAMENTE</p>
+            <div style="font-size: 70px; margin: 15px 0;" class="clapping-hands">👏🏼 👏🏼 👏🏼</div>
             <br>
-            <img src="https://i.gifer.com/7V7.gif" style="width: 170px; border-radius: 12px; box-shadow: 0 4px 15px rgba(28, 167, 166, 0.6);">
+            <img src="https://i.gifer.com/7V7.gif" style="width: 180px; border-radius: 15px; box-shadow: 0 5px 20px rgba(28, 167, 166, 0.4);">
         </div>
         <audio autoplay hidden>
             <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
@@ -262,30 +264,29 @@ if califica:
     """, unsafe_allow_html=True)
 
 else:
-    st.error(f"❌ AÚN NO ALCANZAS LA META DE CALIFICACIÓN PARA **{canal.upper()}**")
+    st.error(f"❌ **META PENDIENTE** | Aún no alcanzas el volumen requerido para calificar en **{canal.upper()}**.")
     
-    with st.expander("🔍 Ver faltante por opción de calificación:"):
-        st.write(f"- **Opción 1:** Llevas {total_ventas_hogar}/{req_h_op1} Ventas Hogar")
-        st.write(f"- **Opción 2:** Llevas {total_ventas_hogar}/{req_h_op2} Hogar y {v_pyme}/{req_pyme_op2} PYME")
-        st.write(f"- **Opción 3:** Llevas {v_hogar_mayor_40}/{req_h40_op3} Ventas Hogar ≥ $40")
-        st.write(f"- **Opción 4:** Llevas {v_pyme}/{req_pyme_op4} Ventas PYME")
-        st.write(f"- **Opción 5:** Llevas {total_ventas_hogar}/{req_h_op5} Hogar y {v_rcv}/{req_rcv_op5} RCV")
-        st.write(f"- **Opción 6:** Llevas {total_ventas_hogar}/{req_h_op6} Hogar y {v_upselling}/{req_upsell_op6} Upselling")
+    with st.expander("🔍 Desglose de brecha operativa (Faltante para calificar):"):
+        st.markdown(f"""
+        - **Opción 1:** Registras **{total_ventas_hogar}** de {req_h_op1} Ventas Hogar.
+        - **Opción 2:** Registras **{total_ventas_hogar}**/{req_h_op2} Hogar y **{v_pyme}**/{req_pyme_op2} PYME.
+        - **Opción 3:** Registras **{v_hogar_mayor_40}**/{req_h40_op3} Ventas Hogar (Ticket ≥ $40).
+        - **Opción 4:** Registras **{v_pyme}**/{req_pyme_op4} Ventas PYME.
+        - **Opción 5:** Registras **{total_ventas_hogar}**/{req_h_op5} Hogar y **{v_rcv}**/{req_rcv_op5} RCV.
+        - **Opción 6:** Registras **{total_ventas_hogar}**/{req_h_op6} Hogar y **{v_upselling}**/{req_upsell_op6} Upselling.
+        """)
 
-st.markdown('</div>', unsafe_allow_html=True)
+st.divider()
 
 # --- PANEL DE RESULTADOS ---
-st.markdown('<div class="content-card">', unsafe_allow_html=True)
-st.subheader("📊 Resumen de Comisiones")
+st.markdown("### 📈 PANEL DE CONTROL DE COMISIONES")
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Total Ventas Hogar", f"{total_ventas_hogar}")
-c2.metric("Puntos Base", f"{total_puntos_base} pts")
-c3.metric("Categoría Alcanzada", f"{categoria} (+{int(pct_bono*100)}%)")
-c4.metric("💰 ESTIMADO A COBRAR", f"${total_puntos_finales:.2f} Ref")
+c1.metric("Volumen Hogar", f"{total_ventas_hogar}")
+c2.metric("Puntuación Base", f"{total_puntos_base} pts")
+c3.metric("Rango Alcanzado", f"{categoria} (+{int(pct_bono*100)}%)")
+c4.metric("💰 PROYECCIÓN DE PAGO", f"${total_puntos_finales:.2f} Ref")
 
 if califica and pct_bono > 0:
     st.balloons()
-    st.success(f"🔥 ¡Excelente gestión! Tu categoría **{categoria}** te otorga un **+{int(pct_bono*100)}%** extra sobre el total de tus puntos.")
-
-st.markdown('</div>', unsafe_allow_html=True)
+    st.success(f"🔥 **¡Excelente gestión comercial!** Tu desempeño en rango **{categoria}** activa un multiplicador del **+{int(pct_bono*100)}%** sobre tu puntuación base.")
