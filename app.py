@@ -1,5 +1,6 @@
 import streamlit as st
-import time
+import base64
+import os
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
@@ -9,28 +10,40 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILOS CSS CORPORATIVOS PREMIUM ---
-st.markdown("""
+# --- FUNCIÓN PARA CARGAR LA FOTO DE SOFÍA ---
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return "" # Retorna vacío si no encuentra la imagen
+
+# Intenta cargar la imagen de sofia (Debes tener un archivo llamado sofia.png en tu carpeta)
+sofia_b64 = get_base64_image("sofia.png")
+# Si no encuentra 'sofia.png', usa un avatar de mujer de negocios genérico como respaldo
+img_src = f"data:image/png;base64,{sofia_b64}" if sofia_b64 else "https://cdn-icons-png.flaticon.com/512/4140/4140047.png"
+
+# --- ESTILOS CSS CORPORATIVOS PREMIUM Y ANIMACIONES ---
+st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
 
     /* Fondo general con degradado oficial Fibex */
-    .stApp {
+    .stApp {{
         background: linear-gradient(165deg, #010a17 0%, #031838 35%, #0b5b99 75%, #1ca7a6 100%) !important;
         background-attachment: fixed !important;
         font-family: 'Montserrat', sans-serif !important;
         color: #FFFFFF !important;
-    }
+    }}
 
     /* Barra Lateral Premium */
-    [data-testid="stSidebar"] {
+    [data-testid="stSidebar"] {{
         background: rgba(2, 14, 33, 0.95) !important;
         backdrop-filter: blur(15px);
         border-right: 1px solid rgba(28, 167, 166, 0.3);
-    }
+    }}
 
     /* Subtítulo del Header */
-    .fibex-subtext {
+    .fibex-subtext {{
         font-family: 'Montserrat', sans-serif;
         font-size: 15px;
         font-weight: 700;
@@ -41,62 +54,108 @@ st.markdown("""
         margin-bottom: 35px;
         font-style: italic;
         text-transform: uppercase;
-    }
+    }}
 
     /* Estilo de las Métricas (Tarjetas de resultados) */
-    div[data-testid="stMetric"] {
+    div[data-testid="stMetric"] {{
         background: rgba(3, 24, 56, 0.7) !important;
         border: 1px solid rgba(28, 167, 166, 0.5) !important;
         border-radius: 12px !important;
         padding: 20px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         transition: transform 0.2s ease-in-out;
-    }
-    div[data-testid="stMetric"]:hover {
+    }}
+    div[data-testid="stMetric"]:hover {{
         transform: translateY(-3px);
         border: 1px solid #80E3E2 !important;
-    }
-    div[data-testid="stMetric"] label {
+    }}
+    div[data-testid="stMetric"] label {{
         color: #80E3E2 !important;
         font-size: 1rem !important;
         font-weight: 600 !important;
-    }
-    div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
+    }}
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] {{
         color: #FFFFFF !important;
         font-weight: 900 !important;
         font-size: 2.2rem !important;
-    }
+    }}
 
-    /* Separadores nativos */
-    hr {
+    hr {{
         border-color: rgba(28, 167, 166, 0.3) !important;
         margin-top: 2rem !important;
         margin-bottom: 2rem !important;
-    }
+    }}
 
-    /* ANIMACIÓN DE MANOS APLAUDIENDO */
-    @keyframes clapBounce {
-        0% { transform: scale(1) rotate(0deg); }
-        25% { transform: scale(1.2) rotate(-10deg); }
-        50% { transform: scale(1) rotate(0deg); }
-        75% { transform: scale(1.2) rotate(10deg); }
-        100% { transform: scale(1) rotate(0deg); }
-    }
-    .clapping-hands {
-        display: inline-block;
-        animation: clapBounce 0.5s infinite ease-in-out;
-    }
+    /* =========================================
+       MAGIA CSS: ANIMACIONES PARA SOFÍA Y MODAL
+       ========================================= */
+       
+    /* Contenedor fijo en la esquina superior derecha (No estorba) */
+    .sofia-container {{
+        position: fixed;
+        top: 60px;
+        right: 40px;
+        width: 140px;
+        z-index: 9999;
+        pointer-events: none; /* Los clics pasan a través de ella */
+        text-align: center;
+    }}
 
-    /* VENTANA POP-UP DE CELEBRACIÓN (AUTO-DESAPARECE EN 5 SEGUNDOS) */
-    @keyframes modalPopup5s {
-        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-        8% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-        12% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        88% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); visibility: hidden; display: none; }
-    }
+    .sofia-img {{
+        width: 100%;
+        border-radius: 50%; /* La hace redonda */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        border: 3px solid #1ca7a6;
+        transition: all 0.3s ease;
+    }}
 
-    .celebration-modal {
+    /* Animación de Sofía cuando califica (Dura 5s) */
+    @keyframes sofiaCelebra {{
+        0% {{ transform: scale(1) translateY(0); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }}
+        10% {{ transform: scale(1.2) translateY(-15px) rotate(5deg); box-shadow: 0 0 30px #1ca7a6; }}
+        20% {{ transform: scale(1.2) translateY(-15px) rotate(-5deg); }}
+        30% {{ transform: scale(1.2) translateY(-15px) rotate(5deg); }}
+        40% {{ transform: scale(1.2) translateY(-15px) rotate(-5deg); }}
+        50% {{ transform: scale(1.2) translateY(-15px) rotate(5deg); }}
+        60% {{ transform: scale(1.2) translateY(-15px) rotate(-5deg); }}
+        70% {{ transform: scale(1.2) translateY(-15px) rotate(5deg); }}
+        80% {{ transform: scale(1.2) translateY(-15px) rotate(-5deg); }}
+        90% {{ transform: scale(1.2) translateY(-15px) rotate(0deg); box-shadow: 0 0 30px #1ca7a6; }}
+        100% {{ transform: scale(1) translateY(0); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }}
+    }}
+
+    .sofia-animada {{
+        animation: sofiaCelebra 5s forwards;
+    }}
+
+    /* Manitas aplaudiendo flotantes (Duran 5s y desaparecen) */
+    @keyframes floatingClaps {{
+        0% {{ opacity: 0; transform: translateY(20px) scale(0.5); }}
+        10% {{ opacity: 1; transform: translateY(-10px) scale(1.5); }}
+        90% {{ opacity: 1; transform: translateY(-30px) scale(1.5); }}
+        100% {{ opacity: 0; transform: translateY(-50px) scale(0.5); visibility: hidden; }}
+    }}
+
+    .sofia-claps {{
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 35px;
+        opacity: 0;
+        animation: floatingClaps 5s forwards;
+    }}
+
+    /* VENTANA POP-UP GIGANTE EN EL CENTRO (Dura 5s) */
+    @keyframes modalPopup5s {{
+        0% {{ opacity: 0; transform: translate(-50%, -50%) scale(0.8); }}
+        8% {{ opacity: 1; transform: translate(-50%, -50%) scale(1.05); }}
+        12% {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
+        88% {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
+        100% {{ opacity: 0; transform: translate(-50%, -50%) scale(0.8); visibility: hidden; display: none; }}
+    }}
+
+    .celebration-modal {{
         position: fixed;
         top: 50%;
         left: 50%;
@@ -113,7 +172,7 @@ st.markdown("""
         pointer-events: none;
         width: 90%;
         max-width: 500px;
-    }
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -137,13 +196,12 @@ canal = st.radio(
     label_visibility="collapsed"
 )
 
-st.divider() # Línea separadora limpia y elegante
+st.divider()
 
 # --- BARRA LATERAL: INGRESO DE DATOS ---
 st.sidebar.markdown("## 📊 GESTIÓN COMERCIAL")
 st.sidebar.caption("Ingresa el volumen de ventas del período.")
 
-# 1. Ventas Hogar < $40 (Según Tarifario)
 st.sidebar.markdown("### 1. Planes Hogar (< $40)")
 planes_menores = {
     "Conectados Básico ($25) [3 pts]": ("p_25", 3),
@@ -152,14 +210,11 @@ planes_menores = {
     "Familiar Básico ($35) [9 pts]": ("p_35_f", 9)
 }
 
-v_hogar_menor = 0
-puntos_hogar_menor = 0
+v_hogar_menor = 0; puntos_hogar_menor = 0
 for nombre, (key_id, pts) in planes_menores.items():
     cant = st.sidebar.number_input(f"{nombre}", min_value=0, value=0, step=1, key=key_id)
-    v_hogar_menor += cant
-    puntos_hogar_menor += (cant * pts)
+    v_hogar_menor += cant; puntos_hogar_menor += (cant * pts)
 
-# 2. Ventas Hogar >= $40 (Según Tarifario)
 st.sidebar.markdown("### 2. Planes Hogar (≥ $40)")
 planes_mayores = {
     "Cinéfilos Medio ($40) [10 pts]": ("p_40_cin", 10),
@@ -173,17 +228,14 @@ planes_mayores = {
     "Familiar XFull ($60) [15 pts]": ("p_60_f", 15)
 }
 
-v_hogar_mayor_40 = 0
-puntos_hogar_mayor = 0
+v_hogar_mayor_40 = 0; puntos_hogar_mayor = 0
 for nombre, (key_id, pts) in planes_mayores.items():
     cant = st.sidebar.number_input(f"{nombre}", min_value=0, value=0, step=1, key=key_id)
-    v_hogar_mayor_40 += cant
-    puntos_hogar_mayor += (cant * pts)
+    v_hogar_mayor_40 += cant; puntos_hogar_mayor += (cant * pts)
 
 total_ventas_hogar = v_hogar_menor + v_hogar_mayor_40
 total_puntos_hogar = puntos_hogar_menor + puntos_hogar_mayor
 
-# 3. Adicionales
 st.sidebar.markdown("### 3. Servicios Corporativos / Extras")
 v_pyme = st.sidebar.number_input("PYME (15 pts)", min_value=0, value=0, step=1, key="v_pyme")
 v_rcv = st.sidebar.number_input("RCV (3 pts)", min_value=0, value=0, step=1, key="v_rcv")
@@ -234,47 +286,38 @@ else:
 
 total_puntos_finales = total_puntos_base * (1 + pct_bono) if califica else 0
 
+# --- INYECCIÓN DE SOFÍA EN ESQUINA SUPERIOR DERECHA ---
+# Si califica = True, se activan las clases de animación. Si es False, se queda quieta.
+clase_animacion = "sofia-animada" if califica else ""
+emojis_html = '<div class="sofia-claps">👏👏👏</div>' if califica else ''
+
+st.markdown(f"""
+    <div class="sofia-container">
+        <img src="{img_src}" class="sofia-img {clase_animacion}">
+        {emojis_html}
+    </div>
+""", unsafe_allow_html=True)
+
+
 # --- ESTATUS DE CALIFICACIÓN ---
 st.markdown("### 🎯 ESTATUS DE CALIFICACIÓN QUINCENAL")
 
 if califica:
     st.success(f"✅ **CALIFICACIÓN APROBADA** | Estás habilitado para el esquema de comisiones en **{canal}**.")
-    cumplidas = []
-    if opc1: cumplidas.append("Volumen Ventas Hogar (Opción 1)")
-    if opc2: cumplidas.append("Mix Hogar + PYME (Opción 2)")
-    if opc3: cumplidas.append("Ticket Alto Hogar ≥ $40 (Opción 3)")
-    if opc4: cumplidas.append("Volumen PYME (Opción 4)")
-    if opc5: cumplidas.append("Mix Hogar + RCV (Opción 5)")
-    if opc6: cumplidas.append("Mix Hogar + UPSELLING (Opción 6)")
     
-    st.info(f"**Criterios alcanzados:** {', '.join(cumplidas)}")
-    
-    # --- POP-UP DE CELEBRACIÓN GRANDE (AUTO-DESAPARECE EN 5s) ---
+    # Modal gigante y Sonido (Aparecen y se auto-destruyen en 5s)
     st.markdown("""
         <div class="celebration-modal">
             <h2 style="color: #80E3E2; margin-bottom: 5px; font-weight: 900; font-family: 'Montserrat', sans-serif; letter-spacing: 1px;">¡META ALCANZADA! 🎉</h2>
             <p style="color: #FFFFFF; font-size: 18px; font-weight: 600; margin-bottom: 20px;">CALIFICACIÓN APROBADA EXITOSAMENTE</p>
-            <div style="font-size: 70px; margin: 15px 0;" class="clapping-hands">👏🏼 👏🏼 👏🏼</div>
-            <br>
-            <img src="https://i.gifer.com/7V7.gif" style="width: 180px; border-radius: 15px; box-shadow: 0 5px 20px rgba(28, 167, 166, 0.4);">
+            <div style="font-size: 70px; margin: 15px 0;">👏🏼 👏🏼 👏🏼</div>
         </div>
         <audio autoplay hidden>
             <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
         </audio>
     """, unsafe_allow_html=True)
-
 else:
     st.error(f"❌ **META PENDIENTE** | Aún no alcanzas el volumen requerido para calificar en **{canal.upper()}**.")
-    
-    with st.expander("🔍 Desglose de brecha operativa (Faltante para calificar):"):
-        st.markdown(f"""
-        - **Opción 1:** Registras **{total_ventas_hogar}** de {req_h_op1} Ventas Hogar.
-        - **Opción 2:** Registras **{total_ventas_hogar}**/{req_h_op2} Hogar y **{v_pyme}**/{req_pyme_op2} PYME.
-        - **Opción 3:** Registras **{v_hogar_mayor_40}**/{req_h40_op3} Ventas Hogar (Ticket ≥ $40).
-        - **Opción 4:** Registras **{v_pyme}**/{req_pyme_op4} Ventas PYME.
-        - **Opción 5:** Registras **{total_ventas_hogar}**/{req_h_op5} Hogar y **{v_rcv}**/{req_rcv_op5} RCV.
-        - **Opción 6:** Registras **{total_ventas_hogar}**/{req_h_op6} Hogar y **{v_upselling}**/{req_upsell_op6} Upselling.
-        """)
 
 st.divider()
 
@@ -289,4 +332,4 @@ c4.metric("💰 PROYECCIÓN DE PAGO", f"${total_puntos_finales:.2f} Ref")
 
 if califica and pct_bono > 0:
     st.balloons()
-    st.success(f"🔥 **¡Excelente gestión comercial!** Tu desempeño en rango **{categoria}** activa un multiplicador del **+{int(pct_bono*100)}%** sobre tu puntuación base.")
+    st.success(f"🔥 **¡Excelente gestión comercial!** Tu desempeño en rango **{categoria}** activa un multiplicador del **+{int(pct_bono*100)}%**.")
