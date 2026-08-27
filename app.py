@@ -31,13 +31,14 @@ st.markdown("""
     /* Subtítulo del Header */
     .fibex-subtext {
         font-family: 'Montserrat', sans-serif;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 700;
         color: #80E3E2;
         text-align: center;
-        letter-spacing: 2px;
+        letter-spacing: 1.5px;
         margin-top: -10px;
         margin-bottom: 25px;
+        font-style: italic;
     }
 
     /* Tarjetas de Contenido */
@@ -82,14 +83,36 @@ st.markdown("""
         75% { transform: scale(1.3) rotate(12deg); }
         100% { transform: scale(1) rotate(0deg); }
     }
-    .clapping-container {
-        text-align: center;
-        margin: 15px 0;
-    }
     .clapping-hands {
-        font-size: 55px;
         display: inline-block;
         animation: clapBounce 0.5s infinite ease-in-out;
+    }
+
+    /* VENTANA POP-UP DE CELEBRACIÓN (APARECE Y DESAPARECE EN 5 SEGUNDOS) */
+    @keyframes modalPopup5s {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+        10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); visibility: hidden; display: none; }
+    }
+
+    .celebration-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(3, 24, 56, 0.96);
+        border: 2px solid #1ca7a6;
+        border-radius: 24px;
+        padding: 35px 25px;
+        text-align: center;
+        z-index: 999999;
+        box-shadow: 0 0 60px rgba(28, 167, 166, 0.8), 0 0 30px rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(15px);
+        animation: modalPopup5s 5s forwards;
+        pointer-events: none;
+        width: 85%;
+        max-width: 480px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -102,7 +125,8 @@ with col_head2:
     except:
         st.markdown("<h1 style='text-align: center; color: white;'>FIBEX TELECOM</h1>", unsafe_allow_html=True)
 
-st.markdown('<div class="fibex-subtext">⚡ SIMULADOR OFICIAL DE COMISIONES Y METAS (BOLETÍN N° 022)</div>', unsafe_allow_html=True)
+# --- FRASE MOTIVACIONAL Y DE GESTIÓN ---
+st.markdown('<div class="fibex-subtext">⚡ "LO QUE NO SE MIDE, NO SE CONTROLA; Y LO QUE NO SE CONTROLA, NO SE PUEDE MEJORAR."</div>', unsafe_allow_html=True)
 
 # --- SELECCIÓN PRINCIPAL DE CANAL ---
 st.markdown('<div class="content-card">', unsafe_allow_html=True)
@@ -223,12 +247,14 @@ if califica:
     if opc6: cumplidas.append("Opción 6 (Hogar + UPSELLING)")
     st.info(f" Cumples con: **{', '.join(cumplidas)}**")
     
-    # --- ANIMACIÓN DE APLAUSOS + EFECTO DE SONIDO ---
+    # --- POP-UP DE CELEBRACIÓN GRANDE (AUTO-DESAPARECE EN 5s) ---
     st.markdown("""
-        <div class="clapping-container">
-            <div class="clapping-hands">👏🏼 👏🏼 👏🏼</div>
+        <div class="celebration-modal">
+            <h2 style="color: #80E3E2; margin-bottom: 5px; font-weight: 800;">¡FELICIDADES! 🎉</h2>
+            <p style="color: #FFFFFF; font-size: 17px; font-weight: 700; margin-bottom: 15px;">¡ESTÁS CALIFICADO PARA COMISIONAR!</p>
+            <div style="font-size: 65px; margin: 10px 0;" class="clapping-hands">👏🏼 👏🏼 👏🏼</div>
             <br>
-            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Z0ZjV3eXg2eWJ1bzR1MzlueTFsc28wbjlybzFubndkcnlzcXZ0MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3q2XhfQ8ECE9GLAO/giphy.gif" style="width: 170px; border-radius: 12px; box-shadow: 0 4px 15px rgba(28, 167, 166, 0.6);">
+            <img src="https://i.gifer.com/7V7.gif" style="width: 170px; border-radius: 12px; box-shadow: 0 4px 15px rgba(28, 167, 166, 0.6);">
         </div>
         <audio autoplay hidden>
             <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
