@@ -8,7 +8,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILOS CSS CORPORATIVOS FIBEX TELECOM ---
+# --- ESTILOS CSS CORPORATIVOS Y ANIMACIONES ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
@@ -72,6 +72,24 @@ st.markdown("""
     .stRadio label {
         color: #FFFFFF !important;
         font-weight: 600 !important;
+    }
+
+    /* ANIMACIÓN DE MANOS APLAUDIENDO */
+    @keyframes clapBounce {
+        0% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.3) rotate(-12deg); }
+        50% { transform: scale(1) rotate(0deg); }
+        75% { transform: scale(1.3) rotate(12deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
+    .clapping-container {
+        text-align: center;
+        margin: 15px 0;
+    }
+    .clapping-hands {
+        font-size: 55px;
+        display: inline-block;
+        animation: clapBounce 0.5s infinite ease-in-out;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -204,6 +222,19 @@ if califica:
     if opc5: cumplidas.append("Opción 5 (Hogar + RCV)")
     if opc6: cumplidas.append("Opción 6 (Hogar + UPSELLING)")
     st.info(f" Cumples con: **{', '.join(cumplidas)}**")
+    
+    # --- ANIMACIÓN DE APLAUSOS + EFECTO DE SONIDO ---
+    st.markdown("""
+        <div class="clapping-container">
+            <div class="clapping-hands">👏🏼 👏🏼 👏🏼</div>
+            <br>
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Z0ZjV3eXg2eWJ1bzR1MzlueTFsc28wbjlybzFubndkcnlzcXZ0MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3q2XhfQ8ECE9GLAO/giphy.gif" style="width: 170px; border-radius: 12px; box-shadow: 0 4px 15px rgba(28, 167, 166, 0.6);">
+        </div>
+        <audio autoplay hidden>
+            <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
+        </audio>
+    """, unsafe_allow_html=True)
+
 else:
     st.error(f"❌ AÚN NO ALCANZAS LA META DE CALIFICACIÓN PARA **{canal.upper()}**")
     
