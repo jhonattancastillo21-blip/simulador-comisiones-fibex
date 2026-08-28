@@ -239,9 +239,8 @@ anim_class = "trigger-anim" if califica else ""
 st.markdown(f'<div class="sofia-wrapper"><img src="{img_src}" class="sofia-img {anim_class}"></div>', unsafe_allow_html=True)
 
 if califica:
-    # NIVEL TOP: ÉLITE Y SUPER ESTRELLAS (Aplausos masivos + Glow Neón 5s)
+    # NIVEL TOP: ÉLITE Y SUPER ESTRELLAS (Pista original de YouTube + Glow Neón 5s)
     if categoria in ["ÉLITE", "SUPER ESTRELLAS"]:
-        sound_url = "https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3" # Crowd applause / Aclamación de multitud
         st.markdown(f"""
             <div class="star-modal">
                 <div class="star-text-glow">✨ ¡ERES UNA ESTRELLA! ✨</div>
@@ -250,12 +249,14 @@ if califica:
                 </p>
                 <div style="font-size:3.5rem; margin-top:15px;">🌟 👏🏼 🏆 👏🏼 🌟</div>
             </div>
-            <audio autoplay hidden><source src="{sound_url}" type="audio/mpeg"></audio>
+            <!-- Reproducción del audio del video de YouTube: https://youtu.be/lHcgWdxR14A -->
+            <iframe width="0" height="0" src="https://www.youtube.com/embed/lHcgWdxR14A?autoplay=1&enablejsapi=1" allow="autoplay" style="display:none; visibility:hidden;"></iframe>
+            <audio autoplay hidden><source src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3" type="audio/mpeg"></audio>
         """, unsafe_allow_html=True)
     
-    # NIVEL INTERMEDIO ALTO: SENIOR Y PRO (Fanfarria destacada)
+    # NIVEL INTERMEDIO ALTO: SENIOR Y PRO (Fanfarria festiva)
     elif categoria in ["SENIOR", "PRO"]:
-        sound_url = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" # Triumph Cheer / Fanfarria
+        sound_url = "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"
         st.markdown(f"""
             <div class="glass-modal">
                 <h2 style="color:#80E3E2; font-weight:900; margin-bottom:8px; font-family:'Montserrat'; letter-spacing:1px;">¡EXCELENTE NIVEL ALCANZADO! 🚀</h2>
@@ -265,7 +266,7 @@ if califica:
             <audio autoplay hidden><source src="{sound_url}" type="audio/mpeg"></audio>
         """, unsafe_allow_html=True)
         
-    # NIVEL INICIAL: JUNIOR / BÁSICO (Sonido estándar)
+    # NIVEL INICIAL: JUNIOR / BÁSICO
     else:
         sound_url = "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"
         st.markdown(f"""
