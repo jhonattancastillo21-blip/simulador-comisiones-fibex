@@ -17,12 +17,11 @@ def encode_image(image_path):
 img_sofia = encode_image("sofia.png")
 img_src = f"data:image/png;base64,{img_sofia}" if img_sofia else "https://cdn-icons-png.flaticon.com/512/4140/4140047.png"
 
-# --- 2. CSS ULTRA-RESPONSIVO DE NIVEL ELITE ---
+# --- 2. CSS RESPONSIVO DE ALTO NIVEL ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
 
-    /* Fondo Corporativo Fibex */
     .stApp {{
         background-color: #010a17;
         background-image: 
@@ -33,9 +32,9 @@ st.markdown(f"""
         color: #FFFFFF !important;
     }}
 
-    /* Contenedor del Logo */
+    /* Logo Centrado */
     [data-testid="stImage"] img {{
-        max-width: clamp(240px, 25vw, 400px) !important;
+        max-width: clamp(230px, 26vw, 420px) !important;
         height: auto !important;
         margin: 0 auto !important;
         display: block !important;
@@ -43,28 +42,28 @@ st.markdown(f"""
 
     /* Sidebar Glassmorphism */
     [data-testid="stSidebar"] {{
-        background: rgba(2, 14, 33, 0.85) !important;
+        background: rgba(2, 14, 33, 0.88) !important;
         backdrop-filter: blur(20px) !important;
         -webkit-backdrop-filter: blur(20px) !important;
         border-right: 1px solid rgba(28, 167, 166, 0.25);
     }}
 
-    /* --- TARJETAS DE MÉTRICAS RESPONSIVAS Y SIN TRUNCAMIENTO --- */
+    /* TARJETAS DE MÉTRICAS ULTRA RESPONSIVAS */
     div[data-testid="stMetric"] {{
-        background: rgba(3, 24, 56, 0.70) !important;
+        background: rgba(3, 24, 56, 0.75) !important;
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(28, 167, 166, 0.35) !important;
         border-radius: 16px !important;
-        padding: 14px 12px !important;
+        padding: 16px 10px !important;
         text-align: center !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 105px;
+        min-height: 110px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
     }}
     div[data-testid="stMetric"]:hover {{
         transform: translateY(-3px);
@@ -72,31 +71,28 @@ st.markdown(f"""
         box-shadow: 0 10px 30px rgba(128, 227, 226, 0.25);
     }}
 
-    /* Etiqueta / Título de la Métrica */
     div[data-testid="stMetric"] label {{ 
         color: #80E3E2 !important; 
-        font-size: clamp(0.75rem, 0.9vw, 0.95rem) !important; 
+        font-size: clamp(0.72rem, 0.85vw, 0.95rem) !important; 
         font-weight: 700 !important; 
-        letter-spacing: 0.6px;
+        letter-spacing: 0.5px;
         text-transform: uppercase;
         justify-content: center !important;
         width: 100%;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
     }}
 
-    /* Valor de la Métrica (Ajuste dinámico para evitar 'SUPER ESTR...') */
     div[data-testid="stMetric"] div[data-testid="stMetricValue"] {{ 
         color: #FFFFFF !important; 
         font-weight: 900 !important; 
-        font-size: clamp(1.1rem, 1.4vw, 1.7rem) !important; 
+        font-size: clamp(1rem, 1.35vw, 1.65rem) !important; 
         white-space: normal !important;
         word-break: break-word !important;
         overflow-wrap: break-word !important;
-        line-height: 1.25 !important;
+        line-height: 1.2 !important;
         width: 100%;
     }}
 
-    /* Subtítulo principal */
     .fibex-tagline {{ 
         text-align: center; 
         font-weight: 700; 
@@ -108,8 +104,8 @@ st.markdown(f"""
         margin-bottom: 25px; 
     }}
 
-    /* Avatar de Sofía */
-    .sofia-wrapper {{ position: fixed; top: 60px; right: 30px; width: clamp(70px, 7vw, 110px); z-index: 9999; pointer-events: none; }}
+    /* Avatar Sofía */
+    .sofia-wrapper {{ position: fixed; top: 60px; right: 25px; width: clamp(65px, 7vw, 105px); z-index: 9999; pointer-events: none; }}
     .sofia-img {{ width: 100%; border-radius: 50%; box-shadow: 0 6px 20px rgba(0,0,0,0.6); border: 3px solid #1ca7a6; }}
     
     @keyframes sofiaJump {{
@@ -120,8 +116,8 @@ st.markdown(f"""
         100% {{ transform: translateY(0) scale(1); }}
     }}
     .trigger-anim {{ animation: sofiaJump 4.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }}
-    
-    /* MODAL APLAUSO ESTÁNDAR (JUNIOR, SENIOR, PRO) */
+
+    /* MODALES DE NOTIFICACIÓN */
     @keyframes modalPop {{
         0% {{ opacity: 0; transform: translate(-50%, -40%) scale(0.88); }}
         12%, 88% {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
@@ -135,7 +131,6 @@ st.markdown(f"""
         width: 90%; max-width: 500px; animation: modalPop 4.5s forwards; pointer-events: none;
     }}
 
-    /* MODAL RANGOS TOP (ÉLITE Y SUPER ESTRELLAS) */
     @keyframes starGlowModal {{
         0% {{ opacity: 0; transform: translate(-50%, -45%) scale(0.85); box-shadow: 0 0 10px rgba(128, 227, 226, 0.2); }}
         12%, 88% {{ opacity: 1; transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 50px rgba(128, 227, 226, 0.8), 0 0 90px rgba(28, 167, 166, 0.6); }}
@@ -150,7 +145,7 @@ st.markdown(f"""
         pointer-events: none; width: 90%; max-width: 540px;
     }}
     .star-text-glow {{
-        font-size: clamp(1.6rem, 3vw, 2.5rem);
+        font-size: clamp(1.5rem, 2.8vw, 2.4rem);
         font-weight: 900;
         color: #FFFFFF;
         text-shadow: 0 0 15px #80E3E2, 0 0 30px #1ca7a6;
@@ -158,26 +153,19 @@ st.markdown(f"""
         margin-bottom: 10px;
     }}
 
-    /* MEJORAS ESPECÍFICAS PARA DISPOSITIVOS MÓVILES */
     @media (max-width: 768px) {{
-        [data-testid="stImage"] img {{ max-width: 210px !important; }}
-        .sofia-wrapper {{ top: 45px; right: 12px; width: 62px; }}
+        [data-testid="stImage"] img {{ max-width: 200px !important; }}
+        .sofia-wrapper {{ top: 40px; right: 10px; width: 55px; }}
         div[data-testid="stMetric"] {{ 
-            padding: 10px 6px !important; 
-            min-height: 90px;
+            padding: 10px 4px !important; 
+            min-height: 85px !important;
             margin-bottom: 8px;
-        }}
-        div[data-testid="stMetric"] label {{
-            font-size: 0.72rem !important;
-        }}
-        div[data-testid="stMetric"] div[data-testid="stMetricValue"] {{
-            font-size: 1.15rem !important;
         }}
     }}
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. ENCABEZADO Y LOGO ---
+# --- 3. LOGO Y CABECERA ---
 c1, c2, c3 = st.columns([1, 2, 1])
 with c2:
     try: 
@@ -189,7 +177,7 @@ st.markdown('<div class="fibex-tagline">"Lo que no se mide, no se controla"</div
 canal = st.radio("ÁREA OPERATIVA", ["Oficinas (ATC)", "Ventas Calle / Call Center"], horizontal=True, label_visibility="collapsed")
 st.divider()
 
-# --- 4. PANEL LATERAL (SIDEBAR) ---
+# --- 4. PANEL SIDEBAR ---
 st.sidebar.markdown("### 📊 GESTIÓN DEL CORTE")
 def draw_inputs(title, items_dict):
     st.sidebar.markdown(f"**{title}**")
@@ -206,7 +194,7 @@ v_py = st.sidebar.number_input("PYME (15 pts)", 0, step=1, key="py"); p_py = v_p
 v_rc = st.sidebar.number_input("RCV (3 pts)", 0, step=1, key="rc"); p_rc = v_rc * 3
 v_up = st.sidebar.number_input("UPSELL (4 pts)", 0, step=1, key="up"); p_up = v_up * 4
 
-# --- 5. BÓVEDA DE CONSOLIDACIÓN ---
+# --- 5. BÓVEDA ACUMULATIVA ---
 st.sidebar.divider()
 st.sidebar.markdown("### 💾 BÓVEDA DE CONSOLIDACIÓN")
 if st.sidebar.button("📥 Sumar 1er Corte a Bóveda", use_container_width=True, type="primary"):
@@ -219,13 +207,13 @@ if st.sidebar.button("📥 Sumar 1er Corte a Bóveda", use_container_width=True,
     st.session_state.boveda['pts_pyme'] += p_py
     st.session_state.boveda['pts_rcv'] += p_rc
     st.session_state.boveda['pts_upsell'] += p_up
-    st.sidebar.success("✅ ¡1er Corte guardado! Ingresa los datos del 2do corte.")
+    st.sidebar.success("✅ ¡1er Corte guardado! Registra los datos del 2do corte.")
 
 if st.sidebar.button("🗑️ Vaciar Bóveda", use_container_width=True):
     st.session_state.boveda = {k: 0 for k in st.session_state.boveda}
     st.rerun()
 
-# --- 6. TOTALIZACIÓN Y REGLAS DE NEGOCIO ---
+# --- 6. CÁLCULO DE TOTALES ---
 GT_h = (v_h_menor + v_h_mayor) + st.session_state.boveda['v_hogar']
 GT_h40 = v_h_mayor + st.session_state.boveda['v_h40']
 GT_py = v_py + st.session_state.boveda['v_pyme']
@@ -234,7 +222,7 @@ GT_up = v_up + st.session_state.boveda['v_upsell']
 GT_pts = (p_h_menor + p_h_mayor + p_py + p_rc + p_up) + st.session_state.boveda['pts_hogar'] + st.session_state.boveda['pts_pyme'] + st.session_state.boveda['pts_rcv'] + st.session_state.boveda['pts_upsell']
 
 if st.session_state.boveda['v_hogar'] > 0:
-    st.info(f"📊 **BÓVEDA ACTIVA:** Incluye {st.session_state.boveda['v_hogar']} ventas acumuladas del 1er corte.")
+    st.info(f"📊 **BÓVEDA ACTIVA:** Incluye {st.session_state.boveda['v_hogar']} ventas guardadas del primer corte.")
 
 is_atc = canal == "Oficinas (ATC)"
 req_h1 = 8 if is_atc else 15
@@ -254,44 +242,45 @@ cat_thresholds = [
 categoria, pct_bono = next(((c, p) for t, c, p in cat_thresholds if GT_h >= t), ("BÁSICO", 0.00))
 pago_proyectado = GT_pts * (1 + pct_bono) if califica else 0
 
-# --- 7. SISTEMA EXCLUSIVO DE SONIDO Y ANIMACIÓN ---
+# --- 7. ANIMACIONES Y AUDIOS SEPARADOS ---
 anim_class = "trigger-anim" if califica else ""
 st.markdown(f'<div class="sofia-wrapper"><img src="{img_src}" class="sofia-img {anim_class}"></div>', unsafe_allow_html=True)
 
 if califica:
-    # REGLA 2: ÉLITE Y SUPER ESTRELLAS -> ÚNICAMENTE EL AUDIO DEL ENLACE DE YOUTUBE
+    # 🌟 ÉLITE / SUPER ESTRELLAS: REPRODUCE EXCLUSIVAMENTE EL SONIDO DEL VIDEO DE YOUTUBE
     if categoria in ["ÉLITE", "SUPER ESTRELLAS"]:
         st.markdown(f"""
             <div class="star-modal">
-                <div class="star-text-glow">✨ ¡SUPER ESTRELLA! ✨</div>
-                <p style="color:#80E3E2; font-size:1.15rem; font-weight:700; margin-top:5px; text-transform:uppercase;">
-                    NIVEL {categoria} ALCANZADO (+{int(pct_bono*100)}% BONO)
+                <div class="star-text-glow">✨ ¡{categoria}! ✨</div>
+                <p style="color:#80E3E2; font-size:1.1rem; font-weight:700; margin-top:5px; text-transform:uppercase;">
+                    RANGO MAXIMO ALCANZADO (+{int(pct_bono*100)}% BONO)
                 </p>
-                <div style="font-size:3.2rem; margin-top:12px;">🌟 👏🏼 🏆 👏🏼 🌟</div>
+                <div style="font-size:3rem; margin-top:10px;">🌟 👏🏼 🏆 👏🏼 🌟</div>
             </div>
-            <!-- Único audio activo para ÉLITE / SUPER ESTRELLA (YouTube lHcgWdxR14A) -->
             <iframe width="0" height="0" src="https://www.youtube.com/embed/lHcgWdxR14A?autoplay=1&enablejsapi=1" allow="autoplay" style="display:none; visibility:hidden;"></iframe>
         """, unsafe_allow_html=True)
-    
-    # REGLA 3: ESCALAS INFERIORES A ÉLITE (PRO, SENIOR, JUNIOR) -> APLAUSO PREDETERMINADO
+
+    # 👏🏼 JUNIOR / SENIOR / PRO: AUDIOS PREDETERMINADOS DE APLAUSO
     else:
-        # Sonido predeterminado de aplausos
         sound_default = "https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"
         st.markdown(f"""
             <div class="glass-modal">
-                <h2 style="color:#80E3E2; font-weight:900; margin-bottom:6px; font-family:'Montserrat';">¡EXCELENTE TRABAJO! 🎉</h2>
-                <p style="color:#FFF; font-size:1.05rem; font-weight:600;">Calificación confirmada en Rango <b>{categoria}</b> (+{int(pct_bono*100)}% Bono)</p>
+                <h2 style="color:#80E3E2; font-weight:900; margin-bottom:6px; font-family:'Montserrat';">¡CALIFICACIÓN APROBADA! 🎉</h2>
+                <p style="color:#FFF; font-size:1.05rem; font-weight:600;">Has alcanzado el rango <b>{categoria}</b> (+{int(pct_bono*100)}% Bono)</p>
                 <div style="font-size:3rem; margin-top:10px;">👏🏼 👏🏼 👏🏼</div>
             </div>
-            <!-- Audio predeterminado de aplausos para niveles base e intermedios -->
             <audio autoplay hidden><source src="{sound_default}" type="audio/mpeg"></audio>
         """, unsafe_allow_html=True)
-else:
-    st.error(f"⚠️ **META PENDIENTE:** Requiere más volumen de ventas para calificar en {canal}.")
 
-# --- 8. MOSTRAR MÉTRICAS ---
+# --- 8. MOSTRAR TARJETAS DE MÉTRICAS (SIEMPRE VISIBLES) ---
 m1, m2, m3, m4 = st.columns(4)
 m1.metric("Volumen Hogar", GT_h)
 m2.metric("Puntuación Base", f"{GT_pts} pts")
-m3.metric("Rango Operativo", categoria)
+
+# Formato visual elegante del Rango Operativo
+rango_label = f"⭐ {categoria}" if categoria in ["ÉLITE", "SUPER ESTRELLAS"] else categoria
+m3.metric("Rango Operativo", rango_label)
 m4.metric("PROYECCIÓN (Ref)", f"${pago_proyectado:.2f}")
+
+if not califica and (GT_h > 0 or GT_py > 0 or GT_h40 > 0):
+    st.caption(f"⚠️ **Atención:** Aún no cumples la regla mínima para calificar comisiones en {canal}.")
