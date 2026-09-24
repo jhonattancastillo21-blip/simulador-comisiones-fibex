@@ -291,8 +291,8 @@ def lanzar_globos_realistas():
         width = random.randint(40, 90)
         height = int(width * 1.25)
         color = random.choice(colors)
-        duration = random.uniform(7.0, 14.0) # Duran entre 7 y 14 segundos en subir
-        delay = random.uniform(0.0, 5.0)     # Van saliendo poco a poco
+        duration = random.uniform(7.0, 14.0)
+        delay = random.uniform(0.0, 5.0)
         
         style = f"left: {left}vw; width: {width}px; height: {height}px; background-color: {color}; "
         style += f"animation: floatUpBalloons {duration}s ease-in forwards {delay}s;"
@@ -303,20 +303,38 @@ def lanzar_globos_realistas():
 
 if total_ventas >= 30:
     if not st.session_state.aplausos_reproducidos:
-        # 1. Animación visual de globos realistas (CSS personalizado)
+        # 1. Animación visual de globos realistas
         lanzar_globos_realistas()
         
-        # 2. Reproductor oculto del audio de YouTube (p95L-psfneI)
-        youtube_audio_html = """
-        <iframe width="0" height="0" 
-                src="https://www.youtube.com/embed/p95L-psfneI?autoplay=1&controls=0&modestbranding=1&rel=0" 
-                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
-        </iframe>
+        # 2. Reproductor de audio HTML5 Nativo + Forzado por JS
+        # Utilizamos un sonido alojado directamente en los servidores de Google para máxima compatibilidad
+        audio_html = """
+        <audio id="audio_aplausos" autoplay="true" style="display:none;">
+            <source src="https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg" type="audio/ogg">
+        </audio>
+        <script>
+            var audio = document.getElementById("audio_aplausos");
+            audio.volume = 1.0;
+            var playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // La reproducción automática funcionó.
+                }).catch(error => {
+                    // Si el navegador sigue bloqueando (muy común en iPhone), 
+                    // creamos una interacción forzada en el primer clic que haga el usuario
+                    console.log("Autoplay bloqueado. Esperando interacción.");
+                    document.body.addEventListener('click', function() {
+                        audio.play();
+                    }, { once: true });
+                });
+            }
+        </script>
         """
-        st.markdown(youtube_audio_html, unsafe_allow_html=True)
+        st.markdown(audio_html, unsafe_allow_html=True)
         
-        # 3. Marcamos como reproducido para que no vuelva a sonar si llegan a 31, 32...
+        # 3. Marcamos como reproducido
         st.session_state.aplausos_reproducidos = True
 else:
-    # Si bajan de 30 ventas, reseteamos el estado para que vuelva a sonar si vuelven a subir
+    # Reseteamos el estado si bajan de 30
     st.session_state.aplausos_reproducidos = False
