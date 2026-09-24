@@ -5,12 +5,6 @@ import os
 # --- 1. CONFIGURACIÓN DE PÁGINA Y ESTADO DE SESIÓN ---
 st.set_page_config(page_title="Fibex Telecom | Portal de Comisiones", page_icon="⚡", layout="wide")
 
-if 'boveda' not in st.session_state:
-    st.session_state.boveda = {
-        'v_hogar': 0, 'v_h40': 0, 'v_pyme': 0, 'v_rcv': 0, 'v_upsell': 0,
-        'pts_hogar': 0, 'pts_pyme': 0, 'pts_rcv': 0, 'pts_upsell': 0
-    }
-
 def encode_image(image_path):
     return base64.b64encode(open(image_path, "rb").read()).decode() if os.path.exists(image_path) else ""
 
@@ -19,268 +13,238 @@ img_src = f"data:image/png;base64,{img_sofia}" if img_sofia else "https://cdn-ic
 
 # --- 2. CSS RESPONSIVO DE ALTO NIVEL ---
 st.markdown(f"""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
 
-    .stApp {{
-        background-color: #010a17;
-        background-image: 
-            radial-gradient(circle at 50% 15%, rgba(28, 167, 166, 0.20), transparent 45%),
-            radial-gradient(circle at 85% 65%, rgba(11, 91, 153, 0.22), transparent 50%);
-        background-attachment: fixed !important;
-        font-family: 'Montserrat', sans-serif !important;
-        color: #FFFFFF !important;
-    }}
+.stApp {{
+    background-color: #010a17;
+    background-image: radial-gradient(circle at 50% 15%, rgba(28, 167, 166, 0.20), transparent 45%),
+                      radial-gradient(circle at 85% 65%, rgba(11, 91, 153, 0.22), transparent 50%);
+    font-family: 'Montserrat', sans-serif;
+    color: #ffffff;
+}}
 
-    /* Logo Centrado */
-    [data-testid="stImage"] img {{
-        max-width: clamp(230px, 26vw, 420px) !important;
-        height: auto !important;
-        margin: 0 auto !important;
-        display: block !important;
-    }}
+.kpi-card {{
+    background: rgba(10, 25, 47, 0.75);
+    border: 1px solid rgba(28, 167, 166, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}}
 
-    /* Sidebar Glassmorphism */
-    [data-testid="stSidebar"] {{
-        background: rgba(2, 14, 33, 0.88) !important;
-        backdrop-filter: blur(20px) !important;
-        -webkit-backdrop-filter: blur(20px) !important;
-        border-right: 1px solid rgba(28, 167, 166, 0.25);
-    }}
+.kpi-title {{
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1ca7a6;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}}
 
-    /* TARJETAS DE MÉTRICAS ULTRA RESPONSIVAS */
-    div[data-testid="stMetric"] {{
-        background: rgba(3, 24, 56, 0.75) !important;
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(28, 167, 166, 0.35) !important;
-        border-radius: 16px !important;
-        padding: 16px 10px !important;
-        text-align: center !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-        transition: all 0.3s ease;
-        min-height: 110px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-        align-items: center !important;
-    }}
-    div[data-testid="stMetric"]:hover {{
-        transform: translateY(-3px);
-        border-color: #80E3E2 !important;
-        box-shadow: 0 10px 30px rgba(128, 227, 226, 0.25);
-    }}
+.kpi-value {{
+    font-size: 2.1rem;
+    font-weight: 900;
+    color: #ffffff;
+}}
 
-    div[data-testid="stMetric"] label {{ 
-        color: #80E3E2 !important; 
-        font-size: clamp(0.72rem, 0.85vw, 0.95rem) !important; 
-        font-weight: 700 !important; 
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        justify-content: center !important;
-        width: 100%;
-        margin-bottom: 6px;
-    }}
+.kpi-subtext {{
+    font-size: 0.8rem;
+    color: #8892b0;
+    margin-top: 4px;
+}}
+</style>
+""", unsafe_allowed_html=True)
 
-    div[data-testid="stMetric"] div[data-testid="stMetricValue"] {{ 
-        color: #FFFFFF !important; 
-        font-weight: 900 !important; 
-        font-size: clamp(1rem, 1.35vw, 1.65rem) !important; 
-        white-space: normal !important;
-        word-break: break-word !important;
-        overflow-wrap: break-word !important;
-        line-height: 1.2 !important;
-        width: 100%;
-    }}
+# --- 3. ENCABEZADO Y CANAL DE VENTA ---
+col_logo, col_header, col_avatar = st.columns([1, 3, 1])
 
-    .fibex-tagline {{ 
-        text-align: center; 
-        font-weight: 700; 
-        color: #80E3E2; 
-        font-size: clamp(11px, 1vw, 15px); 
-        letter-spacing: 2.5px; 
-        text-transform: uppercase; 
-        margin-top: 4px; 
-        margin-bottom: 25px; 
-    }}
+with col_header:
+    st.markdown("<h1 style='text-align: center; color: #ffffff; font-weight: 900;'>FIBEX TELECOM</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #1ca7a6; font-size: 0.9rem; font-weight: 700;'>\"LO QUE NO SE MIDE, NO SE CONTROLA\"</p>", unsafe_allow_html=True)
 
-    /* Avatar Sofía */
-    .sofia-wrapper {{ position: fixed; top: 60px; right: 25px; width: clamp(65px, 7vw, 105px); z-index: 9999; pointer-events: none; }}
-    .sofia-img {{ width: 100%; border-radius: 50%; box-shadow: 0 6px 20px rgba(0,0,0,0.6); border: 3px solid #1ca7a6; }}
-    
-    @keyframes sofiaJump {{
-        0% {{ transform: translateY(0) scale(1); }}
-        10%, 30%, 50%, 70% {{ transform: translateY(-16px) scale(1.12) rotate(4deg); box-shadow: 0 0 35px rgba(128,227,226,0.8); }}
-        20%, 40%, 60%, 80% {{ transform: translateY(-16px) scale(1.12) rotate(-4deg); }}
-        90% {{ transform: translateY(-16px) scale(1.12) rotate(0deg); }}
-        100% {{ transform: translateY(0) scale(1); }}
-    }}
-    .trigger-anim {{ animation: sofiaJump 4.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }}
+with col_avatar:
+    st.markdown(f"<div style='text-align: right;'><img src='{img_src}' width='80' style='border-radius: 50%; border: 2px solid #1ca7a6;'></div>", unsafe_allow_html=True)
 
-    /* MODALES DE NOTIFICACIÓN */
-    @keyframes modalPop {{
-        0% {{ opacity: 0; transform: translate(-50%, -40%) scale(0.88); }}
-        12%, 88% {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
-        100% {{ opacity: 0; transform: translate(-50%, -60%) scale(0.88); visibility: hidden; }}
-    }}
-    .glass-modal {{
-        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        background: rgba(2, 14, 33, 0.95); backdrop-filter: blur(25px);
-        border: 2px solid #1ca7a6; border-radius: 20px; padding: 35px 25px;
-        text-align: center; z-index: 999999; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-        width: 90%; max-width: 500px; animation: modalPop 4.5s forwards; pointer-events: none;
-    }}
-
-    @keyframes starGlowModal {{
-        0% {{ opacity: 0; transform: translate(-50%, -45%) scale(0.85); box-shadow: 0 0 10px rgba(128, 227, 226, 0.2); }}
-        12%, 88% {{ opacity: 1; transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 50px rgba(128, 227, 226, 0.8), 0 0 90px rgba(28, 167, 166, 0.6); }}
-        100% {{ opacity: 0; transform: translate(-50%, -55%) scale(0.85); visibility: hidden; display: none; }}
-    }}
-    .star-modal {{
-        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        background: linear-gradient(135deg, rgba(2, 14, 33, 0.97) 0%, rgba(3, 38, 77, 0.97) 100%);
-        border: 2px solid #80E3E2; border-radius: 24px; padding: 40px 30px;
-        text-align: center; z-index: 999999;
-        animation: starGlowModal 5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        pointer-events: none; width: 90%; max-width: 540px;
-    }}
-    .star-text-glow {{
-        font-size: clamp(1.5rem, 2.8vw, 2.4rem);
-        font-weight: 900;
-        color: #FFFFFF;
-        text-shadow: 0 0 15px #80E3E2, 0 0 30px #1ca7a6;
-        letter-spacing: 1.5px;
-        margin-bottom: 10px;
-    }}
-
-    @media (max-width: 768px) {{
-        [data-testid="stImage"] img {{ max-width: 200px !important; }}
-        .sofia-wrapper {{ top: 40px; right: 10px; width: 55px; }}
-        div[data-testid="stMetric"] {{ 
-            padding: 10px 4px !important; 
-            min-height: 85px !important;
-            margin-bottom: 8px;
-        }}
-    }}
-    </style>
-""", unsafe_allow_html=True)
-
-# --- 3. LOGO Y CABECERA ---
-c1, c2, c3 = st.columns([1, 2, 1])
-with c2:
-    try: 
-        st.image("logo.png")
-    except: 
-        st.markdown("<h1 style='text-align:center; font-weight:900;'>FIBEX TELECOM</h1>", unsafe_allow_html=True)
-st.markdown('<div class="fibex-tagline">"Lo que no se mide, no se controla"</div>', unsafe_allow_html=True)
-
-canal = st.radio("ÁREA OPERATIVA", ["Oficinas (ATC)", "Ventas Calle / Call Center"], horizontal=True, label_visibility="collapsed")
 st.divider()
 
-# --- 4. PANEL SIDEBAR ---
-st.sidebar.markdown("### 📊 GESTIÓN DEL CORTE")
-def draw_inputs(title, items_dict):
-    st.sidebar.markdown(f"**{title}**")
-    v_total, pts_total = 0, 0
-    for name, (k_id, pts) in items_dict.items():
-        val = st.sidebar.number_input(name, min_value=0, value=0, step=1, key=k_id)
-        v_total += val; pts_total += (val * pts)
-    return v_total, pts_total
+# Selección de Canal
+canal = st.radio(
+    "SELECCIONA EL CANAL DE VENTAS:",
+    ["Ventas Calle / Club Fibex / Corporativo", "Televentas", "ATC (Atención al Cliente)"],
+    horizontal=True
+)
 
-v_h_menor, p_h_menor = draw_inputs("1. Hogar (< $40)", {"Básico ($25) [3pts]":("p25",3), "Cinéfilo ($30) [8pts]":("p30",8), "Medio ($35) [9pts]":("p35",9)})
-v_h_mayor, p_h_mayor = draw_inputs("2. Hogar (≥ $40)", {"Medio ($40) [10pts]":("p40",10), "Full ($45) [12pts]":("p45",12), "XFull ($50+) [15pts]":("p50",15)})
-st.sidebar.markdown("**3. Corporativo & Extras**")
-v_py = st.sidebar.number_input("PYME (15 pts)", 0, step=1, key="py"); p_py = v_py * 15
-v_rc = st.sidebar.number_input("RCV (3 pts)", 0, step=1, key="rc"); p_rc = v_rc * 3
-v_up = st.sidebar.number_input("UPSELL (4 pts)", 0, step=1, key="up"); p_up = v_up * 4
+is_calle = "Calle" in canal
+is_atc = "ATC" in canal
 
-# --- 5. BÓVEDA ACUMULATIVA ---
-st.sidebar.divider()
-st.sidebar.markdown("### 💾 BÓVEDA DE CONSOLIDACIÓN")
-if st.sidebar.button("📥 Sumar 1er Corte a Bóveda", use_container_width=True, type="primary"):
-    st.session_state.boveda['v_hogar'] += (v_h_menor + v_h_mayor)
-    st.session_state.boveda['v_h40'] += v_h_mayor
-    st.session_state.boveda['v_pyme'] += v_py
-    st.session_state.boveda['v_rcv'] += v_rc
-    st.session_state.boveda['v_upsell'] += v_up
-    st.session_state.boveda['pts_hogar'] += (p_h_menor + p_h_mayor)
-    st.session_state.boveda['pts_pyme'] += p_py
-    st.session_state.boveda['pts_rcv'] += p_rc
-    st.session_state.boveda['pts_upsell'] += p_up
-    st.sidebar.success("✅ ¡1er Corte guardado! Registra los datos del 2do corte.")
+# --- 4. BARRA LATERAL (ENTRADA DE DATOS QUINCENALES) ---
+st.sidebar.header("📋 GESTIÓN DEL CORTE (Boletín 027)")
 
-if st.sidebar.button("🗑️ Vaciar Bóveda", use_container_width=True):
-    st.session_state.boveda = {k: 0 for k in st.session_state.boveda}
-    st.rerun()
+st.sidebar.subheader("1. Combos Hogar")
+h_sencillo = st.sidebar.number_input("Conectados Sencillo / Básico ($20-$25)", min_value=0, step=1)
+h_cinefilo_bas = st.sidebar.number_input("Cinéfilos Básicos ($30)", min_value=0, step=1)
+h_medio = st.sidebar.number_input("Conectados Medio / Familiar Básico ($35)", min_value=0, step=1)
+h_cinefilo_med = st.sidebar.number_input("Cinéfilos / Gamer Medio ($40)", min_value=0, step=1)
+h_full = st.sidebar.number_input("Conectados Full / Familiar Medio ($45)", min_value=0, step=1)
+h_cinefilo_xfull = st.sidebar.number_input("Cinéfilos XFull / Gamer Full ($50)", min_value=0, step=1)
+h_xfull = st.sidebar.number_input("Conectados XFull ($55)", min_value=0, step=1)
+h_gamer_xfull = st.sidebar.number_input("Gamer XFull / Familiar Full ($60)", min_value=0, step=1)
 
-# --- 6. CÁLCULO DE TOTALES ---
-GT_h = (v_h_menor + v_h_mayor) + st.session_state.boveda['v_hogar']
-GT_h40 = v_h_mayor + st.session_state.boveda['v_h40']
-GT_py = v_py + st.session_state.boveda['v_pyme']
-GT_rc = v_rc + st.session_state.boveda['v_rcv']
-GT_up = v_up + st.session_state.boveda['v_upsell']
-GT_pts = (p_h_menor + p_h_mayor + p_py + p_rc + p_up) + st.session_state.boveda['pts_hogar'] + st.session_state.boveda['pts_pyme'] + st.session_state.boveda['pts_rcv'] + st.session_state.boveda['pts_upsell']
+st.sidebar.subheader("2. Combos PYME")
+p_30 = st.sidebar.number_input("Emprendedores Conectados ($30)", min_value=0, step=1)
+p_40 = st.sidebar.number_input("Emprendedores Seguro / Comercio Conectado ($40)", min_value=0, step=1)
+p_45 = st.sidebar.number_input("Emprendedores Protegidos ($45)", min_value=0, step=1)
+p_50 = st.sidebar.number_input("Comercio Seguros ($50)", min_value=0, step=1)
+p_55 = st.sidebar.number_input("Comercio Protegidos ($55)", min_value=0, step=1)
+p_65 = st.sidebar.number_input("Oficina Conectados ($65)", min_value=0, step=1)
+p_75 = st.sidebar.number_input("Oficina Seguros / Negocios Conectado ($75)", min_value=0, step=1)
+p_80 = st.sidebar.number_input("Oficina Protegidos ($80)", min_value=0, step=1)
+p_95 = st.sidebar.number_input("Oficina Seguros / Negocios Seguro ($95)", min_value=0, step=1)
+p_120 = st.sidebar.number_input("Negocios Protegidos ($120)", min_value=0, step=1)
 
-if st.session_state.boveda['v_hogar'] > 0:
-    st.info(f"📊 **BÓVEDA ACTIVA:** Incluye {st.session_state.boveda['v_hogar']} ventas guardadas del primer corte.")
+st.sidebar.subheader("3. Equipos Adicionales (Smart Buy & Cámaras)")
+e_roku = st.sidebar.number_input("Roku (2 pts)", min_value=0, step=1)
+e_ups = st.sidebar.number_input("Mini UPS (2 pts)", min_value=0, step=1)
+e_cam1 = st.sidebar.number_input("Combo Cámara X1 (3 pts)", min_value=0, step=1)
+e_cam3 = st.sidebar.number_input("Combo Cámara X3 (9 pts)", min_value=0, step=1)
+e_cam4 = st.sidebar.number_input("Combo Cámara X4 (12 pts)", min_value=0, step=1)
+e_cam6 = st.sidebar.number_input("Combo Cámara X6 (18 pts)", min_value=0, step=1)
 
-is_atc = canal == "Oficinas (ATC)"
-req_h1 = 8 if is_atc else 15
-op1 = GT_h >= req_h1
-op2 = (GT_h >= (6 if is_atc else 10)) and (GT_py >= 1)
-op3 = GT_h40 >= (3 if is_atc else 5)
-op4 = GT_py >= (4 if is_atc else 8)
-califica = any([op1, op2, op3, op4])
+# --- 5. LÓGICA DE CÁLCULO DE PUNTOS ---
+# Puntuación Hogar
+pts_h = (
+    h_sencillo * (3 if is_calle else 2) +
+    h_cinefilo_bas * (8 if is_calle else 7) +
+    h_medio * (9 if is_calle else 8) +
+    h_cinefilo_med * (10 if is_calle else 9) +
+    h_full * (12 if is_calle else 11) +
+    h_cinefilo_xfull * (13 if is_calle else 12) +
+    h_xfull * (14 if is_calle else 13) +
+    h_gamer_xfull * (15 if is_calle else 14)
+)
 
-cat_thresholds = [
-    (30 if is_atc else 50, "SUPER ESTRELLAS", 0.45),
-    (23 if is_atc else 41, "ÉLITE", 0.40),
-    (17 if is_atc else 31, "PRO", 0.35),
-    (11 if is_atc else 20, "SENIOR", 0.30),
-    (6 if is_atc else 10, "JUNIOR", 0.00)
-]
-categoria, pct_bono = next(((c, p) for t, c, p in cat_thresholds if GT_h >= t), ("BÁSICO", 0.00))
-pago_proyectado = GT_pts * (1 + pct_bono) if califica else 0
+# Puntuación PYME
+pts_p = (
+    p_30 * (5 if is_calle else 4) +
+    p_40 * (7 if is_calle else 6) +
+    p_45 * (8 if is_calle else 7) +
+    p_50 * (9 if is_calle else 8) +
+    p_55 * (10 if is_calle else 9) +
+    p_65 * (12 if is_calle else 11) +
+    p_75 * (14 if is_calle else 13) +
+    p_80 * (16 if is_calle else 15) +
+    p_95 * (18 if is_calle else 17) +
+    p_120 * (20 if is_calle else 19)
+)
 
-# --- 7. ANIMACIONES Y AUDIOS SEPARADOS ---
-anim_class = "trigger-anim" if califica else ""
-st.markdown(f'<div class="sofia-wrapper"><img src="{img_src}" class="sofia-img {anim_class}"></div>', unsafe_allow_html=True)
+# Puntuación Equipos
+pts_e = (e_roku * 2) + (e_ups * 2) + (e_cam1 * 3) + (e_cam3 * 9) + (e_cam4 * 12) + (e_cam6 * 18)
 
-if califica:
-    # 🌟 ÉLITE / SUPER ESTRELLAS: REPRODUCE EXCLUSIVAMENTE EL SONIDO DEL VIDEO DE YOUTUBE
-    if categoria in ["ÉLITE", "SUPER ESTRELLAS"]:
-        st.markdown(f"""
-            <div class="star-modal">
-                <div class="star-text-glow">✨ ¡{categoria}! ✨</div>
-                <p style="color:#80E3E2; font-size:1.1rem; font-weight:700; margin-top:5px; text-transform:uppercase;">
-                    RANGO MAXIMO ALCANZADO (+{int(pct_bono*100)}% BONO)
-                </p>
-                <div style="font-size:3rem; margin-top:10px;">🌟 👏🏼 🏆 👏🏼 🌟</div>
-            </div>
-            <iframe width="0" height="0" src="https://www.youtube.com/embed/lHcgWdxR14A?autoplay=1&enablejsapi=1" allow="autoplay" style="display:none; visibility:hidden;"></iframe>
-        """, unsafe_allow_html=True)
+total_ventas = (
+    h_sencillo + h_cinefilo_bas + h_medio + h_cinefilo_med + h_full +
+    h_cinefilo_xfull + h_xfull + h_gamer_xfull + p_30 + p_40 + p_45 +
+    p_50 + p_55 + p_65 + p_75 + p_80 + p_95 + p_120
+)
 
-    # 👏🏼 JUNIOR / SENIOR / PRO: AUDIOS PREDETERMINADOS DE APLAUSO
+puntuacion_total = pts_h + pts_p + pts_e
+
+# CONDICIÓN DE CUMPLIMIENTO QUINCENAL (Mínimo 2 ventas)
+comisiona = total_ventas >= 2
+
+# DETERMINACIÓN DE CATEGORÍA Y BONIFICACIÓN
+if not is_atc:
+    # Calle / Televentas
+    if total_ventas >= 50:
+        categoria = "SUPER ESTRELLAS"
+        bono_pct = 0.45
+    elif total_ventas >= 40:
+        categoria = "ÉLITE"
+        bono_pct = 0.40
+    elif total_ventas >= 30:
+        categoria = "PRO"
+        bono_pct = 0.35
+    elif total_ventas >= 20:
+        categoria = "SENIOR"
+        bono_pct = 0.30
+    elif total_ventas >= 10:
+        categoria = "JUNIOR"
+        bono_pct = 0.00
     else:
-        sound_default = "https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"
-        st.markdown(f"""
-            <div class="glass-modal">
-                <h2 style="color:#80E3E2; font-weight:900; margin-bottom:6px; font-family:'Montserrat';">¡CALIFICACIÓN APROBADA! 🎉</h2>
-                <p style="color:#FFF; font-size:1.05rem; font-weight:600;">Has alcanzado el rango <b>{categoria}</b> (+{int(pct_bono*100)}% Bono)</p>
-                <div style="font-size:3rem; margin-top:10px;">👏🏼 👏🏼 👏🏼</div>
-            </div>
-            <audio autoplay hidden><source src="{sound_default}" type="audio/mpeg"></audio>
-        """, unsafe_allow_html=True)
+        categoria = "BÁSICO"
+        bono_pct = 0.00
+else:
+    # ATC
+    if total_ventas >= 30:
+        categoria = "SUPER ESTRELLAS"
+        bono_pct = 0.45
+    elif total_ventas >= 23:
+        categoria = "ÉLITE"
+        bono_pct = 0.40
+    elif total_ventas >= 17:
+        categoria = "PRO"
+        bono_pct = 0.35
+    elif total_ventas >= 11:
+        categoria = "SENIOR"
+        bono_pct = 0.30
+    elif total_ventas >= 6:
+        categoria = "JUNIOR"
+        bono_pct = 0.00
+    else:
+        categoria = "BÁSICO"
+        bono_pct = 0.00
 
-# --- 8. MOSTRAR TARJETAS DE MÉTRICAS (SIEMPRE VISIBLES) ---
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("Volumen Hogar", GT_h)
-m2.metric("Puntuación Base", f"{GT_pts} pts")
+# Cálculo en dólares
+proyeccion_usd = (puntuacion_total * (1 + bono_pct)) if comisiona else 0.0
 
-# Formato visual elegante del Rango Operativo
-rango_label = f"⭐ {categoria}" if categoria in ["ÉLITE", "SUPER ESTRELLAS"] else categoria
-m3.metric("Rango Operativo", rango_label)
-m4.metric("PROYECCIÓN (Ref)", f"${pago_proyectado:.2f}")
+# --- 6. VISUALIZACIÓN DE RESULTADOS (KPI CARDS) ---
+kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 
-if not califica and (GT_h > 0 or GT_py > 0 or GT_h40 > 0):
-    st.caption(f"⚠️ **Atención:** Aún no cumples la regla mínima para calificar comisiones en {canal}.")
+with kpi1:
+    st.markdown(f"""
+    <div class='kpi-card'>
+        <div class='kpi-title'>VOLUMEN TOTAL</div>
+        <div class='kpi-value'>{total_ventas}</div>
+        <div class='kpi-subtext'>Ventas Instaladas</div>
+    </div>
+    """, unsafe_allowed_html=True)
+
+with kpi2:
+    st.markdown(f"""
+    <div class='kpi-card'>
+        <div class='kpi-title'>PUNTUACIÓN BASE</div>
+        <div class='kpi-value'>{puntuacion_total} pts</div>
+        <div class='kpi-subtext'>Equivalente en USD ($1 = 1pt)</div>
+    </div>
+    """, unsafe_allowed_html=True)
+
+with kpi3:
+    st.markdown(f"""
+    <div class='kpi-card'>
+        <div class='kpi-title'>RANGO OPERATIVO</div>
+        <div class='kpi-value'>{categoria}</div>
+        <div class='kpi-subtext'>Bonificación extra: {int(bono_pct*100)}%</div>
+    </div>
+    """, unsafe_allowed_html=True)
+
+with kpi4:
+    st.markdown(f"""
+    <div class='kpi-card'>
+        <div class='kpi-title'>PROYECCIÓN A COBRAR</div>
+        <div class='kpi-value' style='color: #1ca7a6;'>${proyeccion_usd:.2f}</div>
+        <div class='kpi-subtext'>Al cambio oficial BCV</div>
+    </div>
+    """, unsafe_allowed_html=True)
+
+st.divider()
+
+# --- 7. ALERTAS Y NOTIFICACIONES DE INCENTIVOS ---
+if not comisiona:
+    st.error("⚠️ **Atención:** Requiere un mínimo de 2 ventas en el corte quincenal para activar el cobro de comisiones (Boletín 027).")
+else:
+    st.success("✅ **¡Elegible para comisionar!** Has superado el mínimo de 2 ventas quincenales.")
+
+# Avisos de incentivos adicionales
+meta_alimentacion = 15 if is_atc else 30
+if total_ventas >= meta_alimentacion:
+    st.info(f"🎉 **¡Bono de Alimentación Duplicado!** Has alcanzado la meta de {meta_alimentacion} ventas del mes.")
