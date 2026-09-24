@@ -1,6 +1,7 @@
 import streamlit as st
 import base64
 import os
+import random
 
 # --- 1. CONFIGURACIÓN DE PÁGINA Y ESTADO DE SESIÓN ---
 st.set_page_config(page_title="Fibex Telecom | Portal de Comisiones", page_icon="⚡", layout="wide")
@@ -235,21 +236,75 @@ with kpi4:
 
 st.divider()
 
-# --- 7. ALERTAS Y NOTIFICACIONES ---
+# --- 7. ALERTAS Y NOTIFICACIONES (MENSAJE MOTIVADOR) ---
 if not comisiona:
-    st.error("⚠️ **Atención:** Requiere un mínimo de 2 ventas en el corte quincenal para activar el cobro de comisiones (Boletín 027).")
+    st.markdown("""
+    <div style='background-color: rgba(255, 75, 75, 0.1); border-left: 5px solid #ff4b4b; padding: 15px; border-radius: 5px; margin-bottom: 20px;'>
+        <h4 style='color: #ff4b4b; margin-top: 0;'>⚠️ Aún no eres elegible para comisionar</h4>
+        <p style='color: #dddddd; font-size: 1.05rem; margin-bottom: 0;'>
+            Requieres un mínimo de <strong>2 ventas</strong> en el corte quincenal para activar tus comisiones (Boletín 027). 
+            <br><br>
+            🔥 <strong>¡No te rindas!</strong> En Fibex sabemos el potencial que tienes. Estás a un paso de empezar a sumar ganancias. 
+            ¡Enfócate, contacta a ese cliente indeciso y cierra la venta! <strong>El éxito está en tus manos.</strong>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 else:
-    st.success("✅ **¡Elegible para comisionar!** Has superado el mínimo de 2 ventas quincenales.")
+    st.success("✅ **¡Elegible para comisionar!** Has superado el mínimo de 2 ventas quincenales. ¡Sigue así!")
 
 meta_alimentacion = 15 if is_atc else 30
 if total_ventas >= meta_alimentacion:
     st.info(f"🎉 **¡Bono de Alimentación Duplicado!** Has alcanzado la meta de {meta_alimentacion} ventas del mes.")
 
-# --- 8. LÓGICA DE APLAUSOS (META DE 30 VENTAS) ---
+# --- 8. LÓGICA DE APLAUSOS Y GLOBOS REALISTAS (META DE 30 VENTAS) ---
+
+def lanzar_globos_realistas():
+    html_balloons = """
+    <style>
+    .balloon-anim {
+        position: fixed;
+        bottom: -150px;
+        border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+        box-shadow: inset -10px -10px 15px rgba(0,0,0,0.3), 2px 2px 5px rgba(0,0,0,0.2);
+        z-index: 999999;
+        opacity: 0.95;
+    }
+    .balloon-anim::after {
+        content: '';
+        position: absolute;
+        bottom: -50px;
+        left: 50%;
+        width: 2px;
+        height: 50px;
+        background: rgba(255,255,255,0.4);
+    }
+    @keyframes floatUpBalloons {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(-120vh) rotate(15deg); opacity: 0; }
+    }
+    </style>
+    <div id='balloon-container'>
+    """
+    colors = ["#1ca7a6", "#0b5b99", "#ffffff", "#00d2ff", "#3a7bd5", "#0052D4", "#6FB1FC"]
+    for _ in range(45):
+        left = random.randint(0, 100)
+        width = random.randint(40, 90)
+        height = int(width * 1.25)
+        color = random.choice(colors)
+        duration = random.uniform(7.0, 14.0) # Duran entre 7 y 14 segundos en subir
+        delay = random.uniform(0.0, 5.0)     # Van saliendo poco a poco
+        
+        style = f"left: {left}vw; width: {width}px; height: {height}px; background-color: {color}; "
+        style += f"animation: floatUpBalloons {duration}s ease-in forwards {delay}s;"
+        html_balloons += f"<div class='balloon-anim' style='{style}'></div>"
+    
+    html_balloons += "</div>"
+    st.markdown(html_balloons, unsafe_allow_html=True)
+
 if total_ventas >= 30:
     if not st.session_state.aplausos_reproducidos:
-        # 1. Animación visual de globos
-        st.balloons()
+        # 1. Animación visual de globos realistas (CSS personalizado)
+        lanzar_globos_realistas()
         
         # 2. Reproductor oculto del audio de YouTube (p95L-psfneI)
         youtube_audio_html = """
@@ -263,5 +318,5 @@ if total_ventas >= 30:
         # 3. Marcamos como reproducido para que no vuelva a sonar si llegan a 31, 32...
         st.session_state.aplausos_reproducidos = True
 else:
-    # Si bajan de 30 ventas (por error de tipeo, etc.), reseteamos el estado
+    # Si bajan de 30 ventas, reseteamos el estado para que vuelva a sonar si vuelven a subir
     st.session_state.aplausos_reproducidos = False
