@@ -5,70 +5,6 @@ import random
 
 # --- 1. CONFIGURACIÓN DE PÁGINA Y ESTADO DE SESIÓN ---
 st.set_page_config(page_title="Fibex Telecom | Portal de Comisiones", page_icon="⚡", layout="wide")
-# --- 8. CELEBRACIÓN INTERACTIVA (INFALIBLE PARA MÓVILES) ---
-if total_ventas >= 30:
-    html_celebracion = """
-    <div id="btn-container" style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
-        <button onclick="reproducirCelebracion()" style="background: linear-gradient(135deg, #1ca7a6, #0b5b99); color: white; padding: 18px 35px; font-size: 1.2rem; font-weight: 800; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 20px rgba(28,167,166,0.5); text-transform: uppercase; letter-spacing: 1px; transition: transform 0.2s;">
-            🎉 ¡RECLAMAR RECONOCIMIENTO! 🎉
-        </button>
-        <audio id="audio_aplausos" src="https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg" preload="auto"></audio>
-    </div>
-
-    <script>
-    function reproducirCelebracion() {
-        // 1. Reproducir audio inmediatamente con el clic (El teléfono no lo bloqueará)
-        var audio = document.getElementById("audio_aplausos");
-        audio.volume = 1.0;
-        audio.play();
-        
-        // 2. Ocultar el botón después de pulsarlo
-        document.getElementById("btn-container").style.display = "none";
-        
-        // 3. Crear lluvia de globos con JavaScript puro a pantalla completa
-        var colors = ["#1ca7a6", "#0b5b99", "#ffffff", "#00d2ff", "#3a7bd5", "#0052D4"];
-        for (let i = 0; i < 50; i++) {
-            let balloon = document.createElement('div');
-            let size = Math.floor(Math.random() * 45) + 40; 
-            let left = Math.floor(Math.random() * 100);
-            
-            balloon.style.position = 'fixed';
-            balloon.style.bottom = '-100px';
-            balloon.style.left = left + 'vw';
-            balloon.style.width = size + 'px';
-            balloon.style.height = (size * 1.25) + 'px';
-            balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            balloon.style.borderRadius = '50% 50% 50% 50% / 40% 40% 60% 60%';
-            balloon.style.boxShadow = 'inset -10px -10px 15px rgba(0,0,0,0.3)';
-            balloon.style.zIndex = '999999';
-            balloon.style.pointerEvents = 'none';
-            
-            // Adjuntarlo al cuerpo principal de la página
-            window.parent.document.body.appendChild(balloon);
-            
-            let duration = Math.random() * 5 + 6; // Entre 6 y 11 segundos
-            let delay = Math.random() * 1.5;
-            
-            balloon.animate([
-                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
-                { transform: 'translateY(-120vh) rotate(' + (Math.random() * 40 - 20) + 'deg)', opacity: 0 }
-            ], {
-                duration: duration * 1000,
-                delay: delay * 1000,
-                fill: 'forwards',
-                easing: 'ease-in'
-            });
-            
-            // Limpiar los elementos después de la animación para no saturar el móvil
-            setTimeout(() => balloon.remove(), (duration + delay) * 1000 + 1000);
-        }
-    }
-    </script>
-    """
-    st.markdown(html_celebracion, unsafe_allow_html=True)
-# Estado de sesión para controlar que el aplauso suene solo una vez al llegar a la meta
-if 'aplausos_reproducidos' not in st.session_state:
-    st.session_state.aplausos_reproducidos = False
 
 def encode_image(image_path):
     return base64.b64encode(open(image_path, "rb").read()).decode() if os.path.exists(image_path) else ""
@@ -316,85 +252,62 @@ meta_alimentacion = 15 if is_atc else 30
 if total_ventas >= meta_alimentacion:
     st.info(f"🎉 **¡Bono de Alimentación Duplicado!** Has alcanzado la meta de {meta_alimentacion} ventas del mes.")
 
-# --- 8. LÓGICA DE APLAUSOS Y GLOBOS REALISTAS (META DE 30 VENTAS) ---
-
-def lanzar_globos_realistas():
-    html_balloons = """
-    <style>
-    .balloon-anim {
-        position: fixed;
-        bottom: -150px;
-        border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-        box-shadow: inset -10px -10px 15px rgba(0,0,0,0.3), 2px 2px 5px rgba(0,0,0,0.2);
-        z-index: 999999;
-        opacity: 0.95;
-    }
-    .balloon-anim::after {
-        content: '';
-        position: absolute;
-        bottom: -50px;
-        left: 50%;
-        width: 2px;
-        height: 50px;
-        background: rgba(255,255,255,0.4);
-    }
-    @keyframes floatUpBalloons {
-        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-        100% { transform: translateY(-120vh) rotate(15deg); opacity: 0; }
-    }
-    </style>
-    <div id='balloon-container'>
-    """
-    colors = ["#1ca7a6", "#0b5b99", "#ffffff", "#00d2ff", "#3a7bd5", "#0052D4", "#6FB1FC"]
-    for _ in range(45):
-        left = random.randint(0, 100)
-        width = random.randint(40, 90)
-        height = int(width * 1.25)
-        color = random.choice(colors)
-        duration = random.uniform(7.0, 14.0)
-        delay = random.uniform(0.0, 5.0)
-        
-        style = f"left: {left}vw; width: {width}px; height: {height}px; background-color: {color}; "
-        style += f"animation: floatUpBalloons {duration}s ease-in forwards {delay}s;"
-        html_balloons += f"<div class='balloon-anim' style='{style}'></div>"
-    
-    html_balloons += "</div>"
-    st.markdown(html_balloons, unsafe_allow_html=True)
-
+# --- 8. CELEBRACIÓN INTERACTIVA (INFALIBLE PARA MÓVILES) ---
 if total_ventas >= 30:
-    if not st.session_state.aplausos_reproducidos:
-        # 1. Animación visual de globos realistas
-        lanzar_globos_realistas()
+    html_celebracion = """
+    <div id="btn-container" style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
+        <button onclick="reproducirCelebracion()" style="background: linear-gradient(135deg, #1ca7a6, #0b5b99); color: white; padding: 18px 35px; font-size: 1.2rem; font-weight: 800; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 20px rgba(28,167,166,0.5); text-transform: uppercase; letter-spacing: 1px; transition: transform 0.2s;">
+            🎉 ¡RECLAMAR RECONOCIMIENTO! 🎉
+        </button>
+        <audio id="audio_aplausos" src="https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg" preload="auto"></audio>
+    </div>
+
+    <script>
+    function reproducirCelebracion() {
+        // 1. Reproducir audio inmediatamente con el clic
+        var audio = document.getElementById("audio_aplausos");
+        audio.volume = 1.0;
+        audio.play();
         
-        # 2. Reproductor de audio HTML5 Nativo + Forzado por JS
-        # Utilizamos un sonido alojado directamente en los servidores de Google para máxima compatibilidad
-        audio_html = """
-        <audio id="audio_aplausos" autoplay="true" style="display:none;">
-            <source src="https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg" type="audio/ogg">
-        </audio>
-        <script>
-            var audio = document.getElementById("audio_aplausos");
-            audio.volume = 1.0;
-            var playPromise = audio.play();
+        // 2. Ocultar el botón después de pulsarlo
+        document.getElementById("btn-container").style.display = "none";
+        
+        // 3. Crear lluvia de globos a pantalla completa
+        var colors = ["#1ca7a6", "#0b5b99", "#ffffff", "#00d2ff", "#3a7bd5", "#0052D4"];
+        for (let i = 0; i < 50; i++) {
+            let balloon = document.createElement('div');
+            let size = Math.floor(Math.random() * 45) + 40; 
+            let left = Math.floor(Math.random() * 100);
             
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    // La reproducción automática funcionó.
-                }).catch(error => {
-                    // Si el navegador sigue bloqueando (muy común en iPhone), 
-                    // creamos una interacción forzada en el primer clic que haga el usuario
-                    console.log("Autoplay bloqueado. Esperando interacción.");
-                    document.body.addEventListener('click', function() {
-                        audio.play();
-                    }, { once: true });
-                });
-            }
-        </script>
-        """
-        st.markdown(audio_html, unsafe_allow_html=True)
-        
-        # 3. Marcamos como reproducido
-        st.session_state.aplausos_reproducidos = True
-else:
-    # Reseteamos el estado si bajan de 30
-    st.session_state.aplausos_reproducidos = False
+            balloon.style.position = 'fixed';
+            balloon.style.bottom = '-100px';
+            balloon.style.left = left + 'vw';
+            balloon.style.width = size + 'px';
+            balloon.style.height = (size * 1.25) + 'px';
+            balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            balloon.style.borderRadius = '50% 50% 50% 50% / 40% 40% 60% 60%';
+            balloon.style.boxShadow = 'inset -10px -10px 15px rgba(0,0,0,0.3)';
+            balloon.style.zIndex = '999999';
+            balloon.style.pointerEvents = 'none';
+            
+            window.parent.document.body.appendChild(balloon);
+            
+            let duration = Math.random() * 5 + 6;
+            let delay = Math.random() * 1.5;
+            
+            balloon.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: 'translateY(-120vh) rotate(' + (Math.random() * 40 - 20) + 'deg)', opacity: 0 }
+            ], {
+                duration: duration * 1000,
+                delay: delay * 1000,
+                fill: 'forwards',
+                easing: 'ease-in'
+            });
+            
+            setTimeout(() => balloon.remove(), (duration + delay) * 1000 + 1000);
+        }
+    }
+    </script>
+    """
+    st.markdown(html_celebracion, unsafe_allow_html=True)
