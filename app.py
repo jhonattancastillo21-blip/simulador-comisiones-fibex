@@ -12,59 +12,60 @@ img_sofia = encode_image("sofia.png")
 img_src = f"data:image/png;base64,{img_sofia}" if img_sofia else "https://cdn-icons-png.flaticon.com/512/4140/4140047.png"
 
 # --- 2. CSS RESPONSIVO DE ALTO NIVEL ---
-st.markdown(f"""
+css_style = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
 
-.stApp {{
+.stApp {
     background-color: #010a17;
     background-image: radial-gradient(circle at 50% 15%, rgba(28, 167, 166, 0.20), transparent 45%),
                       radial-gradient(circle at 85% 65%, rgba(11, 91, 153, 0.22), transparent 50%);
     font-family: 'Montserrat', sans-serif;
     color: #ffffff;
-}}
+}
 
-.kpi-card {{
+.kpi-card {
     background: rgba(10, 25, 47, 0.75);
     border: 1px solid rgba(28, 167, 166, 0.3);
     border-radius: 12px;
     padding: 20px;
     text-align: center;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}}
+}
 
-.kpi-title {{
+.kpi-title {
     font-size: 0.85rem;
     font-weight: 700;
     color: #1ca7a6;
     letter-spacing: 1px;
     margin-bottom: 8px;
     text-transform: uppercase;
-}}
+}
 
-.kpi-value {{
+.kpi-value {
     font-size: 2.1rem;
     font-weight: 900;
     color: #ffffff;
-}}
+}
 
-.kpi-subtext {{
+.kpi-subtext {
     font-size: 0.8rem;
     color: #8892b0;
     margin-top: 4px;
-}}
+}
 </style>
-""", unsafe_allowed_html=True)
+"""
+st.markdown(css_style, unsafe_allowed_html=True)
 
 # --- 3. ENCABEZADO Y CANAL DE VENTA ---
 col_logo, col_header, col_avatar = st.columns([1, 3, 1])
 
 with col_header:
-    st.markdown("<h1 style='text-align: center; color: #ffffff; font-weight: 900;'>FIBEX TELECOM</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #1ca7a6; font-size: 0.9rem; font-weight: 700;'>\"LO QUE NO SE MIDE, NO SE CONTROLA\"</p>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #ffffff; font-weight: 900;'>FIBEX TELECOM</h1>", unsafe_allowed_html=True)
+    st.markdown("<p style='text-align: center; color: #1ca7a6; font-size: 0.9rem; font-weight: 700;'>\"LO QUE NO SE MIDE, NO SE CONTROLA\"</p>", unsafe_allowed_html=True)
 
 with col_avatar:
-    st.markdown(f"<div style='text-align: right;'><img src='{img_src}' width='80' style='border-radius: 50%; border: 2px solid #1ca7a6;'></div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align: right;'><img src='{img_src}' width='80' style='border-radius: 50%; border: 2px solid #1ca7a6;'></div>", unsafe_allowed_html=True)
 
 st.divider()
 
@@ -112,7 +113,6 @@ e_cam4 = st.sidebar.number_input("Combo Cámara X4 (12 pts)", min_value=0, step=
 e_cam6 = st.sidebar.number_input("Combo Cámara X6 (18 pts)", min_value=0, step=1)
 
 # --- 5. LÓGICA DE CÁLCULO DE PUNTOS ---
-# Puntuación Hogar
 pts_h = (
     h_sencillo * (3 if is_calle else 2) +
     h_cinefilo_bas * (8 if is_calle else 7) +
@@ -124,7 +124,6 @@ pts_h = (
     h_gamer_xfull * (15 if is_calle else 14)
 )
 
-# Puntuación PYME
 pts_p = (
     p_30 * (5 if is_calle else 4) +
     p_40 * (7 if is_calle else 6) +
@@ -138,7 +137,6 @@ pts_p = (
     p_120 * (20 if is_calle else 19)
 )
 
-# Puntuación Equipos
 pts_e = (e_roku * 2) + (e_ups * 2) + (e_cam1 * 3) + (e_cam3 * 9) + (e_cam4 * 12) + (e_cam6 * 18)
 
 total_ventas = (
@@ -149,12 +147,9 @@ total_ventas = (
 
 puntuacion_total = pts_h + pts_p + pts_e
 
-# CONDICIÓN DE CUMPLIMIENTO QUINCENAL (Mínimo 2 ventas)
 comisiona = total_ventas >= 2
 
-# DETERMINACIÓN DE CATEGORÍA Y BONIFICACIÓN
 if not is_atc:
-    # Calle / Televentas
     if total_ventas >= 50:
         categoria = "SUPER ESTRELLAS"
         bono_pct = 0.45
@@ -174,7 +169,6 @@ if not is_atc:
         categoria = "BÁSICO"
         bono_pct = 0.00
 else:
-    # ATC
     if total_ventas >= 30:
         categoria = "SUPER ESTRELLAS"
         bono_pct = 0.45
@@ -194,7 +188,6 @@ else:
         categoria = "BÁSICO"
         bono_pct = 0.00
 
-# Cálculo en dólares
 proyeccion_usd = (puntuacion_total * (1 + bono_pct)) if comisiona else 0.0
 
 # --- 6. VISUALIZACIÓN DE RESULTADOS (KPI CARDS) ---
@@ -238,13 +231,12 @@ with kpi4:
 
 st.divider()
 
-# --- 7. ALERTAS Y NOTIFICACIONES DE INCENTIVOS ---
+# --- 7. ALERTAS Y NOTIFICACIONES ---
 if not comisiona:
     st.error("⚠️ **Atención:** Requiere un mínimo de 2 ventas en el corte quincenal para activar el cobro de comisiones (Boletín 027).")
 else:
     st.success("✅ **¡Elegible para comisionar!** Has superado el mínimo de 2 ventas quincenales.")
 
-# Avisos de incentivos adicionales
 meta_alimentacion = 15 if is_atc else 30
 if total_ventas >= meta_alimentacion:
     st.info(f"🎉 **¡Bono de Alimentación Duplicado!** Has alcanzado la meta de {meta_alimentacion} ventas del mes.")
