@@ -5,7 +5,67 @@ import random
 
 # --- 1. CONFIGURACIÓN DE PÁGINA Y ESTADO DE SESIÓN ---
 st.set_page_config(page_title="Fibex Telecom | Portal de Comisiones", page_icon="⚡", layout="wide")
+# --- 8. CELEBRACIÓN INTERACTIVA (INFALIBLE PARA MÓVILES) ---
+if total_ventas >= 30:
+    html_celebracion = """
+    <div id="btn-container" style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
+        <button onclick="reproducirCelebracion()" style="background: linear-gradient(135deg, #1ca7a6, #0b5b99); color: white; padding: 18px 35px; font-size: 1.2rem; font-weight: 800; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 20px rgba(28,167,166,0.5); text-transform: uppercase; letter-spacing: 1px; transition: transform 0.2s;">
+            🎉 ¡RECLAMAR RECONOCIMIENTO! 🎉
+        </button>
+        <audio id="audio_aplausos" src="https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg" preload="auto"></audio>
+    </div>
 
+    <script>
+    function reproducirCelebracion() {
+        // 1. Reproducir audio inmediatamente con el clic (El teléfono no lo bloqueará)
+        var audio = document.getElementById("audio_aplausos");
+        audio.volume = 1.0;
+        audio.play();
+        
+        // 2. Ocultar el botón después de pulsarlo
+        document.getElementById("btn-container").style.display = "none";
+        
+        // 3. Crear lluvia de globos con JavaScript puro a pantalla completa
+        var colors = ["#1ca7a6", "#0b5b99", "#ffffff", "#00d2ff", "#3a7bd5", "#0052D4"];
+        for (let i = 0; i < 50; i++) {
+            let balloon = document.createElement('div');
+            let size = Math.floor(Math.random() * 45) + 40; 
+            let left = Math.floor(Math.random() * 100);
+            
+            balloon.style.position = 'fixed';
+            balloon.style.bottom = '-100px';
+            balloon.style.left = left + 'vw';
+            balloon.style.width = size + 'px';
+            balloon.style.height = (size * 1.25) + 'px';
+            balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            balloon.style.borderRadius = '50% 50% 50% 50% / 40% 40% 60% 60%';
+            balloon.style.boxShadow = 'inset -10px -10px 15px rgba(0,0,0,0.3)';
+            balloon.style.zIndex = '999999';
+            balloon.style.pointerEvents = 'none';
+            
+            // Adjuntarlo al cuerpo principal de la página
+            window.parent.document.body.appendChild(balloon);
+            
+            let duration = Math.random() * 5 + 6; // Entre 6 y 11 segundos
+            let delay = Math.random() * 1.5;
+            
+            balloon.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: 'translateY(-120vh) rotate(' + (Math.random() * 40 - 20) + 'deg)', opacity: 0 }
+            ], {
+                duration: duration * 1000,
+                delay: delay * 1000,
+                fill: 'forwards',
+                easing: 'ease-in'
+            });
+            
+            // Limpiar los elementos después de la animación para no saturar el móvil
+            setTimeout(() => balloon.remove(), (duration + delay) * 1000 + 1000);
+        }
+    }
+    </script>
+    """
+    st.markdown(html_celebracion, unsafe_allow_html=True)
 # Estado de sesión para controlar que el aplauso suene solo una vez al llegar a la meta
 if 'aplausos_reproducidos' not in st.session_state:
     st.session_state.aplausos_reproducidos = False
