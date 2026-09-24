@@ -55,17 +55,17 @@ css_style = """
 }
 </style>
 """
-st.markdown(css_style, unsafe_allowed_html=True)
+st.markdown(css_style, unsafe_allow_html=True)
 
 # --- 3. ENCABEZADO Y CANAL DE VENTA ---
 col_logo, col_header, col_avatar = st.columns([1, 3, 1])
 
 with col_header:
-    st.markdown("<h1 style='text-align: center; color: #ffffff; font-weight: 900;'>FIBEX TELECOM</h1>", unsafe_allowed_html=True)
-    st.markdown("<p style='text-align: center; color: #1ca7a6; font-size: 0.9rem; font-weight: 700;'>\"LO QUE NO SE MIDE, NO SE CONTROLA\"</p>", unsafe_allowed_html=True)
+    st.markdown("<h1 style='text-align: center; color: #ffffff; font-weight: 900;'>FIBEX TELECOM</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #1ca7a6; font-size: 0.9rem; font-weight: 700;'>\"LO QUE NO SE MIDE, NO SE CONTROLA\"</p>", unsafe_allow_html=True)
 
 with col_avatar:
-    st.markdown(f"<div style='text-align: right;'><img src='{img_src}' width='80' style='border-radius: 50%; border: 2px solid #1ca7a6;'></div>", unsafe_allowed_html=True)
+    st.markdown(f"<div style='text-align: right;'><img src='{img_src}' width='80' style='border-radius: 50%; border: 2px solid #1ca7a6;'></div>", unsafe_allow_html=True)
 
 st.divider()
 
@@ -200,7 +200,7 @@ with kpi1:
         <div class='kpi-value'>{total_ventas}</div>
         <div class='kpi-subtext'>Ventas Instaladas</div>
     </div>
-    """, unsafe_allowed_html=True)
+    """, unsafe_allow_html=True)
 
 with kpi2:
     st.markdown(f"""
@@ -209,7 +209,7 @@ with kpi2:
         <div class='kpi-value'>{puntuacion_total} pts</div>
         <div class='kpi-subtext'>Equivalente en USD ($1 = 1pt)</div>
     </div>
-    """, unsafe_allowed_html=True)
+    """, unsafe_allow_html=True)
 
 with kpi3:
     st.markdown(f"""
@@ -218,7 +218,7 @@ with kpi3:
         <div class='kpi-value'>{categoria}</div>
         <div class='kpi-subtext'>Bonificación extra: {int(bono_pct*100)}%</div>
     </div>
-    """, unsafe_allowed_html=True)
+    """, unsafe_allow_html=True)
 
 with kpi4:
     st.markdown(f"""
@@ -227,7 +227,7 @@ with kpi4:
         <div class='kpi-value' style='color: #1ca7a6;'>${proyeccion_usd:.2f}</div>
         <div class='kpi-subtext'>Al cambio oficial BCV</div>
     </div>
-    """, unsafe_allowed_html=True)
+    """, unsafe_allow_html=True)
 
 st.divider()
 
