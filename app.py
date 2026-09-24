@@ -5,6 +5,10 @@ import os
 # --- 1. CONFIGURACIÓN DE PÁGINA Y ESTADO DE SESIÓN ---
 st.set_page_config(page_title="Fibex Telecom | Portal de Comisiones", page_icon="⚡", layout="wide")
 
+# Estado de sesión para controlar que el aplauso suene solo una vez al llegar a la meta
+if 'aplausos_reproducidos' not in st.session_state:
+    st.session_state.aplausos_reproducidos = False
+
 def encode_image(image_path):
     return base64.b64encode(open(image_path, "rb").read()).decode() if os.path.exists(image_path) else ""
 
@@ -240,3 +244,24 @@ else:
 meta_alimentacion = 15 if is_atc else 30
 if total_ventas >= meta_alimentacion:
     st.info(f"🎉 **¡Bono de Alimentación Duplicado!** Has alcanzado la meta de {meta_alimentacion} ventas del mes.")
+
+# --- 8. LÓGICA DE APLAUSOS (META DE 30 VENTAS) ---
+if total_ventas >= 30:
+    if not st.session_state.aplausos_reproducidos:
+        # 1. Animación visual de globos
+        st.balloons()
+        
+        # 2. Reproductor oculto del audio de YouTube (p95L-psfneI)
+        youtube_audio_html = """
+        <iframe width="0" height="0" 
+                src="https://www.youtube.com/embed/p95L-psfneI?autoplay=1&controls=0&modestbranding=1&rel=0" 
+                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+        </iframe>
+        """
+        st.markdown(youtube_audio_html, unsafe_allow_html=True)
+        
+        # 3. Marcamos como reproducido para que no vuelva a sonar si llegan a 31, 32...
+        st.session_state.aplausos_reproducidos = True
+else:
+    # Si bajan de 30 ventas (por error de tipeo, etc.), reseteamos el estado
+    st.session_state.aplausos_reproducidos = False
