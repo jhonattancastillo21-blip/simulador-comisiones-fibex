@@ -3,72 +3,151 @@ import base64
 import os
 import random
 
-# --- 1. CONFIGURACIÓN DE PÁGINA Y ESTADO DE SESIÓN ---
-st.set_page_config(page_title="Fibex Telecom | Portal de Comisiones", page_icon="⚡", layout="wide")
+# --- 1. CONFIGURACIÓN DE PÁGINA ---
+st.set_page_config(
+    page_title="Fibex Telecom | Portal de Comisiones",
+    page_icon="⚡",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
+# Auxiliar para codificar imágenes locales en Base64
 def encode_image(image_path):
-    return base64.b64encode(open(image_path, "rb").read()).decode() if os.path.exists(image_path) else ""
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return ""
 
 img_sofia = encode_image("sofia.png")
 img_src = f"data:image/png;base64,{img_sofia}" if img_sofia else "https://cdn-icons-png.flaticon.com/512/4140/4140047.png"
 
-# --- 2. CSS RESPONSIVO DE ALTO NIVEL ---
+# --- 2. CSS CUSTOM DE ALTO NIVEL Y RESPONSIVO PARA MÓVILES ---
 css_style = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
 
+/* Ocultar encabezados no deseados de Streamlit para ganar espacio vertical */
+header[data-testid="stHeader"] {
+    display: none !important;
+}
+
+/* Ajuste general del contenedor */
+.block-container {
+    padding-top: 1rem !important;
+    padding-bottom: 2rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 900px;
+}
+
+/* Fondo principal oscuro corporativo */
 .stApp {
     background-color: #010a17;
-    background-image: radial-gradient(circle at 50% 15%, rgba(28, 167, 166, 0.20), transparent 45%),
-                      radial-gradient(circle at 85% 65%, rgba(11, 91, 153, 0.22), transparent 50%);
+    background-image: radial-gradient(circle at 50% 10%, rgba(28, 167, 166, 0.18), transparent 45%),
+                      radial-gradient(circle at 85% 65%, rgba(11, 91, 153, 0.20), transparent 50%);
     font-family: 'Montserrat', sans-serif;
     color: #ffffff;
 }
 
+/* Header compacto tipo App Nativa */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10, 25, 47, 0.6);
+    border: 1px solid rgba(28, 167, 166, 0.25);
+    border-radius: 16px;
+    padding: 12px 18px;
+    margin-bottom: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.header-title {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: 1px;
+    line-height: 1.1;
+}
+
+.header-subtitle {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #1ca7a6;
+    margin: 3px 0 0 0;
+    letter-spacing: 0.5px;
+}
+
+.header-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: 2px solid #1ca7a6;
+    object-fit: cover;
+    box-shadow: 0 0 12px rgba(28, 167, 166, 0.4);
+}
+
+/* Tarjetas KPI compactas */
 .kpi-card {
-    background: rgba(10, 25, 47, 0.75);
-    border: 1px solid rgba(28, 167, 166, 0.3);
-    border-radius: 12px;
-    padding: 20px;
+    background: linear-gradient(145deg, rgba(10, 25, 47, 0.85), rgba(1, 10, 23, 0.95));
+    border: 1px solid rgba(28, 167, 166, 0.35);
+    border-radius: 14px;
+    padding: 14px 10px;
     text-align: center;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 12px;
 }
 
 .kpi-title {
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-size: 0.72rem;
+    font-weight: 800;
     color: #1ca7a6;
     letter-spacing: 1px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     text-transform: uppercase;
 }
 
 .kpi-value {
-    font-size: 2.1rem;
+    font-size: 1.8rem;
     font-weight: 900;
     color: #ffffff;
+    line-height: 1.1;
 }
 
 .kpi-subtext {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: #8892b0;
-    margin-top: 4px;
+    margin-top: 3px;
+}
+
+/* Radio buttons ajustados */
+div[data-testid="stRadio"] > label {
+    font-weight: 700 !important;
+    color: #1ca7a6 !important;
+    font-size: 0.85rem !important;
+}
+
+/* Reducir separadores */
+hr {
+    margin: 1rem 0 !important;
+    border-color: rgba(28, 167, 166, 0.2) !important;
 }
 </style>
 """
 st.markdown(css_style, unsafe_allow_html=True)
 
-# --- 3. ENCABEZADO Y CANAL DE VENTA ---
-col_logo, col_header, col_avatar = st.columns([1, 3, 1])
-
-with col_header:
-    st.markdown("<h1 style='text-align: center; color: #ffffff; font-weight: 900;'>FIBEX TELECOM</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #1ca7a6; font-size: 0.9rem; font-weight: 700;'>\"LO QUE NO SE MIDE, NO SE CONTROLA\"</p>", unsafe_allow_html=True)
-
-with col_avatar:
-    st.markdown(f"<div style='text-align: right;'><img src='{img_src}' width='80' style='border-radius: 50%; border: 2px solid #1ca7a6;'></div>", unsafe_allow_html=True)
-
-st.divider()
+# --- 3. ENCABEZADO COMPACTO Y ELEGANTE ---
+header_html = f"""
+<div class="header-container">
+    <div>
+        <div class="header-title">FIBEX TELECOM</div>
+        <div class="header-subtitle">"LO QUE NO SE MIDE, NO SE CONTROLA"</div>
+    </div>
+    <img src="{img_src}" class="header-avatar" alt="Sofía Fibex">
+</div>
+"""
+st.markdown(header_html, unsafe_allow_html=True)
 
 # Selección de Canal
 canal = st.radio(
@@ -191,9 +270,8 @@ else:
 
 proyeccion_usd = (puntuacion_total * (1 + bono_pct)) if comisiona else 0.0
 
-# --- 6. VISUALIZACIÓN DE RESULTADOS (KPI CARDS) ---
-kpi1, kpi2, kpi3, kpi4 = st.columns(4)
-
+# --- 6. VISUALIZACIÓN DE RESULTADOS (KPI CARDS EN 2X2 PARA MÓVILES) ---
+kpi1, kpi2 = st.columns(2)
 with kpi1:
     st.markdown(f"""
     <div class='kpi-card'>
@@ -208,16 +286,17 @@ with kpi2:
     <div class='kpi-card'>
         <div class='kpi-title'>PUNTUACIÓN BASE</div>
         <div class='kpi-value'>{puntuacion_total} pts</div>
-        <div class='kpi-subtext'>Equivalente en USD ($1 = 1pt)</div>
+        <div class='kpi-subtext'>Equivalente ($1 = 1pt)</div>
     </div>
     """, unsafe_allow_html=True)
 
+kpi3, kpi4 = st.columns(2)
 with kpi3:
     st.markdown(f"""
     <div class='kpi-card'>
         <div class='kpi-title'>RANGO OPERATIVO</div>
         <div class='kpi-value'>{categoria}</div>
-        <div class='kpi-subtext'>Bonificación extra: {int(bono_pct*100)}%</div>
+        <div class='kpi-subtext'>Bono Extra: {int(bono_pct*100)}%</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -232,80 +311,111 @@ with kpi4:
 
 st.divider()
 
-# --- 7. ALERTAS Y NOTIFICACIONES (MENSAJE MOTIVADOR) ---
+# --- 7. ALERTAS Y NOTIFICACIONES ---
 if not comisiona:
     st.markdown("""
-    <div style='background-color: rgba(255, 75, 75, 0.1); border-left: 5px solid #ff4b4b; padding: 15px; border-radius: 5px; margin-bottom: 20px;'>
-        <h4 style='color: #ff4b4b; margin-top: 0;'>⚠️ Aún no eres elegible para comisionar</h4>
-        <p style='color: #dddddd; font-size: 1.05rem; margin-bottom: 0;'>
-            Requieres un mínimo de <strong>2 ventas</strong> en el corte quincenal para activar tus comisiones (Boletín 027). 
-            <br><br>
-            🔥 <strong>¡No te rindas!</strong> En Fibex sabemos el potencial que tienes. Estás a un paso de empezar a sumar ganancias. 
-            ¡Enfócate, contacta a ese cliente indeciso y cierra la venta! <strong>El éxito está en tus manos.</strong>
+    <div style='background-color: rgba(255, 75, 75, 0.12); border-left: 4px solid #ff4b4b; padding: 12px 15px; border-radius: 8px; margin-bottom: 15px;'>
+        <h4 style='color: #ff4b4b; margin: 0 0 5px 0; font-size: 0.95rem;'>⚠️ Aún no eres elegible para comisionar</h4>
+        <p style='color: #dddddd; font-size: 0.85rem; margin: 0; line-height: 1.4;'>
+            Requieres un mínimo de <strong>2 ventas</strong> en el corte quincenal para activar tus comisiones (Boletín 027).
+            <br>🔥 <strong>¡Enfócate y cierra la próxima venta!</strong> El éxito está en tus manos.
         </p>
     </div>
     """, unsafe_allow_html=True)
 else:
-    st.success("✅ **¡Elegible para comisionar!** Has superado el mínimo de 2 ventas quincenales. ¡Sigue así!")
+    st.success("✅ **¡Elegible para comisionar!** Has superado el mínimo de 2 ventas quincenales.")
 
 meta_alimentacion = 15 if is_atc else 30
 if total_ventas >= meta_alimentacion:
     st.info(f"🎉 **¡Bono de Alimentación Duplicado!** Has alcanzado la meta de {meta_alimentacion} ventas del mes.")
 
-# --- 8. CELEBRACIÓN INTERACTIVA (INFALIBLE PARA MÓVILES) ---
+# --- 8. CELEBRACIÓN COMPATIBLE CON IPHONE (MP3 + JS LOCAL) ---
 if total_ventas >= 30:
     html_celebracion = """
-    <div id="btn-container" style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
-        <button onclick="reproducirCelebracion()" style="background: linear-gradient(135deg, #1ca7a6, #0b5b99); color: white; padding: 18px 35px; font-size: 1.2rem; font-weight: 800; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 20px rgba(28,167,166,0.5); text-transform: uppercase; letter-spacing: 1px; transition: transform 0.2s;">
+    <div id="celebration-box" style="text-align: center; margin: 20px 0;">
+        <button id="celebrate-btn" onclick="ejecutarCelebracion()" style="
+            background: linear-gradient(135deg, #1ca7a6 0%, #0b5b99 100%);
+            color: #ffffff;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(28, 167, 166, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            max-width: 350px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        ">
             🎉 ¡RECLAMAR RECONOCIMIENTO! 🎉
         </button>
-        <audio id="audio_aplausos" src="https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg" preload="auto"></audio>
+        <!-- Formato MP3 universal compatible con iPhone (iOS Safari) y Android -->
+        <audio id="audio_aplausos_mp3" preload="auto">
+            <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
+        </audio>
     </div>
 
     <script>
-    function reproducirCelebracion() {
-        // 1. Reproducir audio inmediatamente con el clic
-        var audio = document.getElementById("audio_aplausos");
-        audio.volume = 1.0;
-        audio.play();
-        
-        // 2. Ocultar el botón después de pulsarlo
-        document.getElementById("btn-container").style.display = "none";
-        
-        // 3. Crear lluvia de globos a pantalla completa
-        var colors = ["#1ca7a6", "#0b5b99", "#ffffff", "#00d2ff", "#3a7bd5", "#0052D4"];
-        for (let i = 0; i < 50; i++) {
-            let balloon = document.createElement('div');
-            let size = Math.floor(Math.random() * 45) + 40; 
-            let left = Math.floor(Math.random() * 100);
-            
-            balloon.style.position = 'fixed';
-            balloon.style.bottom = '-100px';
-            balloon.style.left = left + 'vw';
-            balloon.style.width = size + 'px';
-            balloon.style.height = (size * 1.25) + 'px';
-            balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            balloon.style.borderRadius = '50% 50% 50% 50% / 40% 40% 60% 60%';
-            balloon.style.boxShadow = 'inset -10px -10px 15px rgba(0,0,0,0.3)';
-            balloon.style.zIndex = '999999';
-            balloon.style.pointerEvents = 'none';
-            
-            window.parent.document.body.appendChild(balloon);
-            
-            let duration = Math.random() * 5 + 6;
-            let delay = Math.random() * 1.5;
-            
-            balloon.animate([
-                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
-                { transform: 'translateY(-120vh) rotate(' + (Math.random() * 40 - 20) + 'deg)', opacity: 0 }
-            ], {
-                duration: duration * 1000,
-                delay: delay * 1000,
-                fill: 'forwards',
-                easing: 'ease-in'
+    function ejecutarCelebracion() {
+        // 1. Audio MP3 compatible con iPhone (iOS Safari exige interacción táctil)
+        var audio = document.getElementById("audio_aplausos_mp3");
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(function(e) {
+                console.log("Audio play error:", e);
             });
-            
-            setTimeout(() => balloon.remove(), (duration + delay) * 1000 + 1000);
+        }
+
+        // 2. Ocultar el botón para evitar doble clic
+        var btnBox = document.getElementById("celebration-box");
+        if (btnBox) {
+            btnBox.style.display = "none";
+        }
+
+        // 3. Lluvia de globos renderizada en la ventana actual (compatibilidad Safari)
+        var colors = ["#1ca7a6", "#0b5b99", "#ffffff", "#00d2ff", "#ff007f", "#ffd700"];
+        var container = document.body;
+
+        for (var i = 0; i < 45; i++) {
+            (function() {
+                var balloon = document.createElement("div");
+                var size = Math.floor(Math.random() * 35) + 35;
+                var left = Math.floor(Math.random() * 90) + 5;
+                var color = colors[Math.floor(Math.random() * colors.length)];
+                var duration = (Math.random() * 4 + 5); 
+                var delay = Math.random() * 1.5;
+
+                balloon.style.position = "fixed";
+                balloon.style.bottom = "-80px";
+                balloon.style.left = left + "vw";
+                balloon.style.width = size + "px";
+                balloon.style.height = (size * 1.25) + "px";
+                balloon.style.backgroundColor = color;
+                balloon.style.borderRadius = "50% 50% 50% 50% / 40% 40% 60% 60%";
+                balloon.style.boxShadow = "inset -8px -8px 12px rgba(0,0,0,0.3)";
+                balloon.style.zIndex = "999999";
+                balloon.style.pointerEvents = "none";
+
+                container.appendChild(balloon);
+
+                balloon.animate([
+                    { transform: "translateY(0) rotate(0deg)", opacity: 1 },
+                    { transform: "translateY(-115vh) rotate(" + (Math.random() * 30 - 15) + "deg)", opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    delay: delay * 1000,
+                    fill: "forwards",
+                    easing: "ease-out"
+                });
+
+                setTimeout(function() {
+                    if (balloon && balloon.parentNode) {
+                        balloon.parentNode.removeChild(balloon);
+                    }
+                }, (duration + delay) * 1000 + 500);
+            })();
         }
     }
     </script>
