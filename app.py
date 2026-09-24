@@ -1,7 +1,6 @@
 import streamlit as st
 import base64
 import os
-import random
 
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
@@ -11,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Auxiliar para codificar imágenes locales en Base64
+# Codificar imágenes locales a Base64
 def encode_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
@@ -21,19 +20,26 @@ def encode_image(image_path):
 img_sofia = encode_image("sofia.png")
 img_src = f"data:image/png;base64,{img_sofia}" if img_sofia else "https://cdn-icons-png.flaticon.com/512/4140/4140047.png"
 
-# --- 2. CSS CUSTOM DE ALTO NIVEL Y RESPONSIVO PARA MÓVILES ---
+# --- 2. CSS CUSTOM Y RESPONSIVO PARA MÓVILES ---
 css_style = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
 
-/* Ocultar encabezados no deseados de Streamlit para ganar espacio vertical */
+/* Encabezado transparente para mantener visible la flecha (>) del menú lateral en móviles */
 header[data-testid="stHeader"] {
-    display: none !important;
+    background-color: transparent !important;
+    z-index: 99999;
+}
+
+/* Color de la flecha para desplegar el menú en la esquina superior izquierda */
+button[data-testid="stSidebarCollapseButton"], 
+button[data-testid="baseButton-header"] {
+    color: #1ca7a6 !important;
 }
 
 /* Ajuste general del contenedor */
 .block-container {
-    padding-top: 1rem !important;
+    padding-top: 2rem !important;
     padding-bottom: 2rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -49,7 +55,7 @@ header[data-testid="stHeader"] {
     color: #ffffff;
 }
 
-/* Header compacto tipo App Nativa */
+/* Header compacto estilo App Nativa */
 .header-container {
     display: flex;
     align-items: center;
@@ -63,7 +69,7 @@ header[data-testid="stHeader"] {
 }
 
 .header-title {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 900;
     color: #ffffff;
     margin: 0;
@@ -72,7 +78,7 @@ header[data-testid="stHeader"] {
 }
 
 .header-subtitle {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
     color: #1ca7a6;
     margin: 3px 0 0 0;
@@ -80,8 +86,8 @@ header[data-testid="stHeader"] {
 }
 
 .header-avatar {
-    width: 58px;
-    height: 58px;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
     border: 2px solid #1ca7a6;
     object-fit: cover;
@@ -128,7 +134,6 @@ div[data-testid="stRadio"] > label {
     font-size: 0.85rem !important;
 }
 
-/* Reducir separadores */
 hr {
     margin: 1rem 0 !important;
     border-color: rgba(28, 167, 166, 0.2) !important;
@@ -351,7 +356,6 @@ if total_ventas >= 30:
         ">
             🎉 ¡RECLAMAR RECONOCIMIENTO! 🎉
         </button>
-        <!-- Formato MP3 universal compatible con iPhone (iOS Safari) y Android -->
         <audio id="audio_aplausos_mp3" preload="auto">
             <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
         </audio>
@@ -359,7 +363,6 @@ if total_ventas >= 30:
 
     <script>
     function ejecutarCelebracion() {
-        // 1. Audio MP3 compatible con iPhone (iOS Safari exige interacción táctil)
         var audio = document.getElementById("audio_aplausos_mp3");
         if (audio) {
             audio.currentTime = 0;
@@ -368,13 +371,11 @@ if total_ventas >= 30:
             });
         }
 
-        // 2. Ocultar el botón para evitar doble clic
         var btnBox = document.getElementById("celebration-box");
         if (btnBox) {
             btnBox.style.display = "none";
         }
 
-        // 3. Lluvia de globos renderizada en la ventana actual (compatibilidad Safari)
         var colors = ["#1ca7a6", "#0b5b99", "#ffffff", "#00d2ff", "#ff007f", "#ffd700"];
         var container = document.body;
 
